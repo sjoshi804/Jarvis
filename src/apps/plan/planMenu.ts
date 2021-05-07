@@ -1,11 +1,13 @@
+// Internal Modules
 import { INVALID_OPTION_ERROR } from "../../constants";
+import { DailyPlan } from "./DailyPlan";
 
 // External Modules
 const inquirer = require("inquirer");
 
 class PlanMenu
 {
-    public static async prompt()
+    public static prompt()
     {
         const questions = 
         {
@@ -24,11 +26,21 @@ class PlanMenu
             .then(PlanMenu.response)
     }
 
-    public static async response(answers: any)
+    public static response(answers: any)
     {
         switch(answers.choice)
         {
             case PlanMenu.NEW_DAILY_PLAN:
+                DailyPlan.cli_new_daily_plan_prompt();
+                break;
+            case PlanMenu.VIEW_TODAYS_PLAN:
+                //DailyPlan.cli_view_todays_plan();
+                break;
+            case PlanMenu.ADD_TASKS_TO_BACKLOG:
+                //Task.cli_add_to_backlog();
+                break;
+            case PlanMenu.VIEW_TASKS_IN_BACKLOG:
+                //Task.view_tasks_in_backlog();
                 break;
             default: 
                 console.log(INVALID_OPTION_ERROR)
