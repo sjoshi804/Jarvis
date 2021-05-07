@@ -1,8 +1,8 @@
 class Sprint
 {
     // Member Variables
-    public start_date: Date;
-    public end_date: Date;
-    public task_ids: Array<string>;
-    public review: string;
+    public start_date: Date | undefined;
+    public end_date: Date | undefined;
+    public task_ids: Array<string> | undefined;
+    public review: string | undefined;
 }

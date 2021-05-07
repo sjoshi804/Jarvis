@@ -1,10 +1,10 @@
 class Project
 {
     // Member Variables
-    public title: string;
-    public description: string;
-    public finish_by_date: Date;
-    public task_ids: Array<string>;
-    public status_updates: Array<string>;
-    public completed: boolean;
+    public title: string | undefined;
+    public description: string | undefined;
+    public finish_by_date: Date | undefined;
+    public task_ids: Array<string> | undefined;
+    public status_updates: Array<string> | undefined;
+    public completed: boolean | undefined;
 }

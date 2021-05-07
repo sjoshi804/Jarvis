@@ -1,9 +1,9 @@
 class Task
 {
     // Member Variables
-    public points: number;
-    public title: string;
-    public description: string;
-    public due_date: Date;   
-    public completed: boolean; 
+    public points: number | undefined;
+    public title: string | undefined;
+    public description: string | undefined;
+    public due_date: Date | undefined;   
+    public completed: boolean | undefined; 
 }
