@@ -7,7 +7,7 @@
     "jarvis": "./lib/index.js"
   },
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "npm run build && jarvis",
     "create": "npm run build && npm run test",
     "build": "tsc -p .",
     "local": "sudo npm i -g && jarvis",
