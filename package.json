@@ -31,6 +31,7 @@
     "chalk-animation": "^1.6.0",
     "clear": "^0.1.0",
     "cli-frames": "^2.2.10",
+    "cli-table": "^0.3.6",
     "commander": "^7.2.0",
     "figlet": "^1.5.0",
     "inquirer": "^8.0.0",
