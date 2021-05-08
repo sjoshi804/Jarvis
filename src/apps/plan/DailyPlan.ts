@@ -42,7 +42,7 @@ class DailyPlan
     public static async does_plan_exist(date: Date)
     {
         const date_bounds = Util.get_date_bounds(date);
-        const count = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).countDocuments
+        const count = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).countDocuments(
             {
                 date: {
                     "$gte": date_bounds[0],
