@@ -5,6 +5,7 @@ import { Util } from "../../util"
 // External Modules
 import {v4 as uuid } from 'uuid';
 import { DBClient } from "../../dbClient";
+import { EXIT } from "../../constants";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 
@@ -51,7 +52,50 @@ class DailyPlan
             });
         return count > 0;
     }
+
+    public static async mark_tasks_completed(task_id_list: any)
+    {
+        return DBClient.db.collection(Task.COLLECTION_NAME).updateMany(
+            {
+                _id: { $in : task_id_list }
+            },
+            {
+                completed: true
+            }
+        )
+    }
     
+    public static async remove_tasks_from_plan(plan_date: Date, task_id_list: any)
+    {
+        const date_bounds = Util.get_date_bounds(plan_date);
+        return DBClient.db.collection(DailyPlan.COLLECTION_NAME).updateOne(
+            {
+                date: {
+                    "$gte": date_bounds[0],
+                    "$lt": date_bounds[1]
+                }
+            },
+            {
+                $pull: { task_ids: { $each: task_id_list } } 
+            }
+        )
+    }
+
+    public static async add_tasks_to_plan(plan_date: Date, task_id_list: any)
+    {
+        const date_bounds = Util.get_date_bounds(plan_date);
+        return DBClient.db.collection(DailyPlan.COLLECTION_NAME).updateOne(
+            {
+                date: {
+                    "$gte": date_bounds[0],
+                    "$lt": date_bounds[1]
+                }
+            },
+            {
+                $push: { task_ids: { $each: task_id_list } } 
+            }
+        )
+    }
 
     // CLI Functions
     public static async cli_new_daily_plan_prompt()
@@ -61,7 +105,7 @@ class DailyPlan
             {
                 type: 'list',
                 name: 'choice',
-                message: 'Create Plan For: ',
+                message: 'Create Plan For:',
                 choices: [
                     DailyPlan.TODAY,
                     DailyPlan.TOMORROW,
@@ -71,7 +115,7 @@ class DailyPlan
             {
                 type: 'date',
                 name: 'plan_date',
-                message: 'Enter Date To Plan For: ',
+                message: 'Enter Date To Plan For:',
                 when: (answers: { choice: string; }) => answers.choice === DailyPlan.OTHER
             }
         ]
@@ -96,11 +140,11 @@ class DailyPlan
             plan_date = answers.plan_date
         }
         
-        // Check if plan already exists and if so, print error and break
+        // Check if plan already exists and if so, trigger view / potential add sequence
         if (await DailyPlan.does_plan_exist(plan_date))
         {
             Util.print_error("Plan already exists");
-            return;
+            await DailyPlan.cli_view_daily_plan(plan_date);
         }
 
         // Get list of tasks for today
@@ -112,8 +156,49 @@ class DailyPlan
 
     public static async cli_view_daily_plan(date: Date)
     {
+        // Get task list for day and display
         const task_list = await DailyPlan.get_tasks_for_day(date);
         Task.cli_print_task_table(task_list)
+
+        // Check if user wants to mark tasks completed / add more tasks to plan / remove tasks from plan
+        const questions = 
+        [
+            {
+                type: 'list',
+                message: 'Edit Plan:',
+                name: 'choice',
+                choices:
+                [
+                    DailyPlan.MARK_TASKS_COMPLETED,
+                    DailyPlan.ADD_TASKS_TO_PLAN,
+                    DailyPlan.REMOVE_TASKS_FROM_PLAN,
+                    EXIT
+                ]
+            }
+        ]
+
+        return inquirer.prompt(questions)
+            .then(async (answers: { choice: any; }) =>
+            {
+                switch (answers.choice)
+                {
+                    case DailyPlan.MARK_TASKS_COMPLETED:
+                        var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
+                        await DailyPlan.mark_tasks_completed(chosen_tasks);
+                        break;
+                    case DailyPlan.ADD_TASKS_TO_PLAN:
+                        var new_task_ids = await Task.cli_create_or_select_tasks();
+                        await DailyPlan.add_tasks_to_plan(date, new_task_ids)
+                        break;
+                    case DailyPlan.REMOVE_TASKS_FROM_PLAN:
+                        var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
+                        await DailyPlan.remove_tasks_from_plan(date, chosen_tasks);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        );
     }
 
     // Constants
@@ -121,6 +206,9 @@ class DailyPlan
     public static TOMORROW = "Tomorrow";
     public static OTHER = "Other";
     public static COLLECTION_NAME = "daily_plan";
+    public static MARK_TASKS_COMPLETED = "Mark Tasks Completed";
+    public static ADD_TASKS_TO_PLAN = "Add Tasks to Plan"
+    public static REMOVE_TASKS_FROM_PLAN = "Delete Tasks from Plan"
 }
 
 export { DailyPlan }

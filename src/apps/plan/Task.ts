@@ -163,6 +163,7 @@ class Task
         return this.cli_choose_tasks_from_list(await Task.get_backlog());
     }
 
+    // Returns list of task ids chosen
     public static async cli_choose_tasks_from_list(task_list: any[])
     {
         var task_choices = [];
