@@ -40,6 +40,22 @@ class DailyPlan
         return task_list;
     }
 
+    public static async add_review(date: Date, review: string)
+    {
+        const date_bounds = Util.get_date_bounds(date);
+        return DBClient.db.collection(DailyPlan.COLLECTION_NAME).updateOne(
+            {
+                date: {
+                    "$gte": date_bounds[0],
+                    "$lt": date_bounds[1]
+                }
+            },
+            {
+                $set: { review: review }
+            }
+        )
+    }
+
     public static async does_plan_exist(date: Date)
     {
         const date_bounds = Util.get_date_bounds(date);
@@ -209,6 +225,28 @@ class DailyPlan
                 }
             }
         );
+    }
+
+    public static async cli_add_review()
+    {
+        const questions = [
+            {
+                type: 'date',
+                name: 'plan_date',
+                message: 'Enter Date:'
+            },
+            {
+                type: 'input',
+                name: 'review',
+                message: 'Review:'
+            }
+        ]
+
+        return inquirer.prompt(questions).then(async (answers: { plan_date: Date; review: string; }) =>
+            {
+                return DailyPlan.add_review(answers.plan_date, answers.review);
+            }
+        )
     }
 
     // Constants
