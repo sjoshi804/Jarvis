@@ -147,11 +147,11 @@ class Task
     public static async cli_view_backlog()
     {
         var task_list = await Task.get_backlog();
-        Task.print_task_table(task_list);
+        Task.cli_print_task_table(task_list);
     }
 
     // Misc Functions
-    public static print_task_table(task_list: string | any[])
+    public static cli_print_task_table(task_list: string | any[])
     {
         // Instantiate Table
         var table = new Table({

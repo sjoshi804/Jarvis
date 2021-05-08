@@ -25,18 +25,31 @@ class DailyPlan
     }
 
     // DB Functions
-    public static async get_tasks_for_today()
+    public static async get_tasks_for_day(date: Date)
     {
-        const today_plan = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).findOne(
+        const date_bounds = Util.get_date_bounds(date);
+        const day_plan = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).findOne(
             {
                 date: {
-                    "$gte": Util.getTodayDate(),
-                    "$lt": Util.getTomorrowDate()
+                    "$gte": date_bounds[0],
+                    "$lt": date_bounds[1]
                 }
             })
-        
         const task_list = await DBClient.db.collection(Task.COLLECTION_NAME).find({"_id" : {"$in" : today_plan.task_ids}}).toArray();
         return task_list;
+    }
+
+    public static async does_plan_exist(date: Date)
+    {
+        const date_bounds = Util.get_date_bounds(date);
+        const count = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).count(
+            {
+                date: {
+                    "$gte": date_bounds[0],
+                    "$lt": date_bounds[1]
+                }
+            });
+        return count > 0;
     }
     
 
@@ -72,11 +85,11 @@ class DailyPlan
         var plan_date;
         if (answers.choice == DailyPlan.TODAY)
         {
-            plan_date = Util.getTodayDate()
+            plan_date = Util.get_today_date()
         }
         else if (answers.choice == DailyPlan.TOMORROW)
         {
-            plan_date = Util.getTomorrowDate()
+            plan_date = Util.get_tomorrow_date()
         }
         else 
         {
@@ -95,6 +108,12 @@ class DailyPlan
 
         // Create Daily Plan Object with these list of tasks
         await DBClient.db.collection(DailyPlan.COLLECTION_NAME).insertOne(new DailyPlan(plan_date, task_ids));
+    }
+
+    public static async cli_view_daily_plan(date: Date)
+    {
+        const task_list = await DailyPlan.get_tasks_for_day(date);
+        Task.cli_print_task_table(task_list)
     }
 
     // Constants
