@@ -60,7 +60,7 @@ class DailyPlan
                 _id: { $in : task_id_list }
             },
             {
-                completed: true
+                $set: { completed: true }
             }
         )
     }
@@ -76,7 +76,7 @@ class DailyPlan
                 }
             },
             {
-                $pull: { task_ids: { $each: task_id_list } } 
+                $pull: { task_ids: { $in: task_id_list } } 
             }
         )
     }
@@ -140,11 +140,11 @@ class DailyPlan
             plan_date = answers.plan_date
         }
         
-        // Check if plan already exists and if so, trigger view / potential add sequence
+        // Check if plan already exists and if so, trigger view edit seqeuence
         if (await DailyPlan.does_plan_exist(plan_date))
         {
             Util.print_error("Plan already exists");
-            await DailyPlan.cli_view_daily_plan(plan_date);
+            await DailyPlan.cli_view_and_edit_daily_plan(plan_date);
         }
 
         // Get list of tasks for today
@@ -157,8 +157,15 @@ class DailyPlan
     public static async cli_view_daily_plan(date: Date)
     {
         // Get task list for day and display
-        const task_list = await DailyPlan.get_tasks_for_day(date);
+        var task_list = await DailyPlan.get_tasks_for_day(date);
         Task.cli_print_task_table(task_list)
+        return task_list
+    }
+
+    public static async cli_view_and_edit_daily_plan(date: Date)
+    {
+        // View daily plan
+        const task_list = await DailyPlan.cli_view_daily_plan(date);
 
         // Check if user wants to mark tasks completed / add more tasks to plan / remove tasks from plan
         const questions = 
@@ -189,10 +196,12 @@ class DailyPlan
                     case DailyPlan.ADD_TASKS_TO_PLAN:
                         var new_task_ids = await Task.cli_create_or_select_tasks();
                         await DailyPlan.add_tasks_to_plan(date, new_task_ids)
+                        await DailyPlan.cli_view_daily_plan(date);
                         break;
                     case DailyPlan.REMOVE_TASKS_FROM_PLAN:
                         var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
                         await DailyPlan.remove_tasks_from_plan(date, chosen_tasks);
+                        await DailyPlan.cli_view_daily_plan(date);
                         break;
                     default:
                         break;

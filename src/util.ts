@@ -8,7 +8,7 @@ class Util
         // Null check
         if (date == null)
         {
-            return "";
+            return "No Due Date";
         }
 
         const month = date.toLocaleString('default', { month: 'short' })
@@ -31,7 +31,7 @@ class Util
     public static get_date_bounds(date: Date)
     {
         const lower_bound = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-        const upper_bound = new Date(lower_bound.getTime() + 24 * 60 * 60 * 1000);
+        const upper_bound = new Date(lower_bound.getTime() + (24 * 60 * 60 * 1000) - 1);
         return [lower_bound, upper_bound]
     }
 
@@ -45,9 +45,9 @@ class Util
         return "==== " + heading + " ===="
     }
 
-    public static short_display_task(task: { title: string; due_date: Date | null; })
+    public static short_display_task(task: { title: string; due_date: Date | null; points: number})
     {
-        return chalk.red(task.title + " " + Util.formatDate(task.due_date))
+        return chalk.red(task.title + " (" + task.points + ") - " + Util.formatDate(task.due_date))
     }
 }
 

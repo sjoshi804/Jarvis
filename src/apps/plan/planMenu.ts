@@ -40,7 +40,7 @@ class PlanMenu
             case PlanMenu.VIEW_TODAYS_PLAN:
                 if (await DailyPlan.does_plan_exist(Util.get_today_date()))
                 {
-                    await DailyPlan.cli_view_daily_plan(Util.get_today_date())
+                    await DailyPlan.cli_view_and_edit_daily_plan(Util.get_today_date())
                 }
                 else
                 {

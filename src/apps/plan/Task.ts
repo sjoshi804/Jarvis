@@ -54,36 +54,36 @@ class Task
         ]
 
         var task_ids = new Array<string>();
-        var new_task_ids;
-        do
+        while (true)
         {
-            new_task_ids = undefined;
-            await inquirer.prompt(questions).then(
+            var new_task_ids = await inquirer.prompt(questions).then(
                 async (answers: { choice: any; }) =>
                 {
                     switch (answers.choice)
                     {
                         case Task.CREATE_NEW_TASK:
-                            new_task_ids = await Task.cli_create_new_task();
-                            break;
+                            return Task.cli_create_new_task();
                         case Task.ADD_TASK_FROM_BACKLOG:
-                            new_task_ids = await Task.cli_select_from_backlog();
-                            break;
+                            return Task.cli_select_from_backlog();
                         case EXIT:
-                            break;
+                            return undefined;
                         default:
                             throw exception("Invalid choice.")
                     }
                 }
             )
             
+            
             // Add new task to list of tasks
             if (new_task_ids != undefined)
             {
-                task_ids.concat(new_task_ids) 
+                task_ids = task_ids.concat(new_task_ids) 
+            }
+            else
+            {
+                break;
             }
         }
-        while (new_task_ids != undefined)
         
         return task_ids;
     }
