@@ -17,8 +17,10 @@ class PlanMenu
             name: 'choice',
             message: 'What do you want to do?',
             choices: [
+                new inquirer.Separator(Util.format_separator("Daily Plans")),
                 PlanMenu.VIEW_TODAYS_PLAN,
                 PlanMenu.NEW_DAILY_PLAN,
+                new inquirer.Separator(Util.format_separator("Tasks")),
                 PlanMenu.ADD_TASKS_TO_BACKLOG,
                 PlanMenu.VIEW_TASKS_IN_BACKLOG
             ],

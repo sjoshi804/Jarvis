@@ -33,6 +33,11 @@ class Util
     {
         console.log(chalk.red(message));
     }
+
+    public static format_separator(heading: string): string
+    {
+        return "==== " + heading + " ===="
+    }
 }
 
 export { Util }
