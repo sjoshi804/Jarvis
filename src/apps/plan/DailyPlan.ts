@@ -158,7 +158,7 @@ class DailyPlan
     {
         // Get task list for day and display
         var task_list = await DailyPlan.get_tasks_for_day(date);
-        Task.cli_print_task_table(task_list)
+        Task.cli_print_task_table(task_list, true)
         return task_list
     }
 

@@ -6,6 +6,7 @@ import { Util } from "../../util"
 import { v4 as uuid } from 'uuid';
 import { exception } from "console";
 import { DBClient } from "../../dbClient";
+import chalk from "chalk";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 const Table = require('cli-table');
@@ -84,7 +85,7 @@ class Task
                 break;
             }
         }
-        
+
         return task_ids;
     }
 
@@ -195,7 +196,7 @@ class Task
     }
 
     // Misc Functions
-    public static cli_print_task_table(task_list: string | any[])
+    public static cli_print_task_table(task_list: string | any[], completion_stats = false)
     {
         // Instantiate Table
         var table = new Table({
@@ -203,16 +204,46 @@ class Task
         , colWidths: [25, 10, 15, 50]
         });
 
+        var points_total = 0;
+        var points_completed = 0;
         // Create table for tasks
         for (var i = 0; i < task_list.length; i++) 
         {
             const due_date = task_list[i].due_date == undefined ? "N/A" : Util.formatDate(task_list[i].due_date);
             var task_row = [task_list[i].title, task_list[i].points, due_date, task_list[i].description];
+            
+            // Status based color formatting
+            if (task_list[i].due_date != null && task_list[i].due_date < (new Date()))
+            {
+                task_row.forEach(elem => chalk.red(elem))
+            }
+            else if (task_list[i].completed == true)
+            {
+                task_row.forEach(elem => chalk.green(elem))
+                points_completed += task_list[i].points;
+            }
+
+            points_total = task_list[i].points;
             table.push(task_row);
         }
 
         // Print Table
         console.log(table.toString());
+
+        // Completion stats
+        const completed_percentage = points_completed / points_total * 100
+        if (completed_percentage == 100)
+        {
+            console.log(chalk.green(completed_percentage.toString() + "%"))
+        }
+        else if (completed_percentage > 50)
+        {
+            console.log(chalk.yellow(completed_percentage.toString() + "%"))
+        }
+        else 
+        {
+            console.log(chalk.red(completed_percentage.toString() + "%"))
+        }
     }
 
     // Constants

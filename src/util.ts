@@ -47,7 +47,15 @@ class Util
 
     public static short_display_task(task: { title: string; due_date: Date | null; points: number})
     {
-        return chalk.red(task.title + " (" + task.points + ") - " + Util.formatDate(task.due_date))
+        const task_abbrev = task.title + " (" + task.points + ") - " + Util.formatDate(task.due_date)
+        if (task.due_date != null && task.due_date < (new Date()))
+        {
+            return chalk.red(task_abbrev)
+        }
+        else 
+        {
+            return task_abbrev
+        }
     }
 }
 
