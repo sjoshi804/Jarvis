@@ -8,7 +8,6 @@ import { exception } from "console";
 import { DBClient } from "../../dbClient";
 import chalk from "chalk";
 import { DailyPlan } from "./DailyPlan";
-import { globalAgent } from "http";
 import { Goal } from "./goal";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
