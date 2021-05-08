@@ -36,7 +36,14 @@ class PlanMenu
                 await DailyPlan.cli_new_daily_plan_prompt();
                 break;
             case PlanMenu.VIEW_TODAYS_PLAN:
-                await DailyPlan.cli_view_daily_plan(Util.get_today_date())
+                if (await DailyPlan.does_plan_exist(Util.get_today_date()))
+                {
+                    await DailyPlan.cli_view_daily_plan(Util.get_today_date())
+                }
+                else
+                {
+                    console.log("Plan doesn't exist");
+                }
                 break;
             case PlanMenu.ADD_TASKS_TO_BACKLOG:
                 await Task.cli_create_new_task();
