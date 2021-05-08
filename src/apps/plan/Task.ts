@@ -65,12 +65,12 @@ class Task
                     {
                         case Task.CREATE_NEW_TASK:
                             new_task_ids = await Task.cli_create_new_task();
-                            return;
+                            break;
                         case Task.ADD_TASK_FROM_BACKLOG:
                             new_task_ids = await Task.cli_select_from_backlog();
-                            return;
+                            break;
                         case EXIT:
-                            return;
+                            break;
                         default:
                             throw exception("Invalid choice.")
                     }
