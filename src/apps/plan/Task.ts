@@ -44,7 +44,7 @@ class Task
             {
                 type: 'list',
                 name: 'choice',
-                message: 'Add Task By: ',
+                message: 'Add Task By:',
                 choices: [
                     Task.CREATE_NEW_TASK,
                     Task.ADD_TASK_FROM_BACKLOG,
@@ -179,7 +179,7 @@ class Task
         return inquirer.prompt(
             [{
                 type: 'checkbox',
-                message: 'Choose Tasks',
+                message: 'Choose Tasks:',
                 name: 'selected_tasks',
                 choices: task_choices,
             
