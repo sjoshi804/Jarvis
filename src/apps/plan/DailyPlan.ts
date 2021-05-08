@@ -208,7 +208,7 @@ class DailyPlan
     public static COLLECTION_NAME = "daily_plan";
     public static MARK_TASKS_COMPLETED = "Mark Tasks Completed";
     public static ADD_TASKS_TO_PLAN = "Add Tasks to Plan"
-    public static REMOVE_TASKS_FROM_PLAN = "Delete Tasks from Plan"
+    public static REMOVE_TASKS_FROM_PLAN = "Remove Tasks from Plan"
 }
 
 export { DailyPlan }
