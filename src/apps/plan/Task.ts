@@ -4,6 +4,7 @@ import { EXIT } from "../../constants";
 
 // External Modules
 const inquirer = require('inquirer');
+const Table = require('cli-table');
 import { v4 as uuid } from 'uuid';
 import { DBClient } from "../../dbClient";
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
@@ -27,6 +28,12 @@ class Task
         this.points = points;
         this.due_date = due_date;
         this.completed = false;
+    }
+
+    // DB Functions
+    public static async get_backlog()
+    {
+        return await DBClient.db.collection(Task.COLLECTION_NAME).find({completed: false}).toArray();
     }
 
     // CLI Functions
@@ -133,6 +140,28 @@ class Task
                 return new_task._id;
             }
         );
+    }
+
+    public static async cli_view_backlog()
+    {
+        var task_list = await Task.get_backlog();
+
+        // Instantiate Table
+        var table = new Table({
+            head: ['Title', 'Points', 'Due Date', 'Description']
+        , colWidths: [25, 10, 25, 50]
+        });
+
+        // Create table for tasks
+        for (var i = 0; i < task_list.length; i++) 
+        {
+            const due_date = task_list[i].due_date == undefined ? "N/A" : task_list[i].due_date;
+            var task_row = [task_list[i].title, task_list[i].points, due_date, task_list[i].description];
+            table.push(task_row);
+        }
+
+        // Print Table
+        console.log(table.toString());
     }
 
     // Constants

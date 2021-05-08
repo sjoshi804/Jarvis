@@ -1,6 +1,7 @@
 // Internal Modules
 import { INVALID_OPTION_ERROR } from "../../constants";
 import { DailyPlan } from "./DailyPlan";
+import { Task } from "./task";
 
 // External Modules
 const inquirer = require("inquirer");
@@ -37,10 +38,10 @@ class PlanMenu
                 //DailyPlan.cli_view_todays_plan();
                 break;
             case PlanMenu.ADD_TASKS_TO_BACKLOG:
-                //Task.cli_add_to_backlog();
+                await Task.cli_create_new_task();
                 break;
             case PlanMenu.VIEW_TASKS_IN_BACKLOG:
-                //Task.view_tasks_in_backlog();
+                await Task.cli_view_backlog();
                 break;
             default: 
                 console.log(INVALID_OPTION_ERROR)
