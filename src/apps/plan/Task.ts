@@ -54,20 +54,20 @@ class Task
         ]
 
         var task_ids = new Array<string>();
-        var new_task_id;
+        var new_task_ids;
         do
         {
-            new_task_id = undefined;
+            new_task_ids = undefined;
             await inquirer.prompt(questions).then(
                 async (answers: { choice: any; }) =>
                 {
                     switch (answers.choice)
                     {
                         case Task.CREATE_NEW_TASK:
-                            new_task_id = await Task.cli_create_new_task();
+                            new_task_ids = await Task.cli_create_new_task();
                             return;
                         case Task.ADD_TASK_FROM_BACKLOG:
-                            new_task_id = undefined;
+                            new_task_ids = undefined;
                             return;
                         case EXIT:
                             return;
@@ -78,12 +78,12 @@ class Task
             )
             
             // Add new task to list of tasks
-            if (new_task_id != undefined)
+            if (new_task_ids != undefined)
             {
-                task_ids.push(new_task_id) 
+                task_ids.concat(new_task_ids) 
             }
         }
-        while (new_task_id != undefined)
+        while (new_task_ids != undefined)
         
         return task_ids;
     }
@@ -118,30 +118,44 @@ class Task
                 name: 'due_date',
                 message: "Due Date",
                 when: (answers: { bool_skip_due_date: any; }) => !answers.bool_skip_due_date
+            },
+            {
+                type: 'confirm',
+                name: 'bool_task_creation_complete',
+                message: "Done creating tasks?"
             }
         ]
 
-        
-        return inquirer
-        .prompt(questions)
-        .then(
-            async (answers: any) =>
-            {
-                // Create New Task Object
-                var new_task = new Task(
-                    answers.title,
-                    answers.description,
-                    answers.points,
-                    answers.due_date
-                );
+        var new_task_ids = Array<string>();
+        var task_creation_complete = false;
+        while (!task_creation_complete)
+        {
+            task_creation_complete = await inquirer
+            .prompt(questions)
+            .then(
+                async (answers: any) =>
+                {
+                    // Create New Task Object
+                    var new_task = new Task(
+                        answers.title,
+                        answers.description,
+                        answers.points,
+                        answers.due_date
+                    );
 
-                // Save New Task in Database
-                await DBClient.db.collection(Task.COLLECTION_NAME).insertOne(new_task);
+                    // Save New Task in Database
+                    await DBClient.db.collection(Task.COLLECTION_NAME).insertOne(new_task);
 
-                // Return task id
-                return new_task._id;
-            }
-        );
+                    // Push task id on to array
+                    new_task_ids.push(new_task._id);
+
+                    // Return whether or not to continue
+                    return answers.bool_task_creation_complete
+                }
+            );
+        }
+
+        return new_task_ids;
     }
 
     public static async cli_view_backlog()
