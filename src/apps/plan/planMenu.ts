@@ -23,6 +23,7 @@ class PlanMenu
                 new inquirer.Separator(Util.format_separator("Tasks")),
                 PlanMenu.ADD_TASKS_TO_BACKLOG,
                 PlanMenu.VIEW_TASKS_IN_BACKLOG,
+                PlanMenu.POSTPONE_TASKS,
                 PlanMenu.DELETE_TASKS
             ],
         }
@@ -54,6 +55,9 @@ class PlanMenu
             case PlanMenu.VIEW_TASKS_IN_BACKLOG:
                 await Task.cli_view_backlog();
                 break;
+            case PlanMenu.POSTPONE_TASKS:
+                await Task.cli_postpone_tasks();
+                break;
             case PlanMenu.DELETE_TASKS:
                 await Task.cli_delete_tasks();
                 break;
@@ -69,6 +73,7 @@ class PlanMenu
     public static ADD_TASKS_TO_BACKLOG = "Add Tasks to Backlog";
     public static VIEW_TASKS_IN_BACKLOG = "View Tasks in Backlog";
     public static DELETE_TASKS = "Delete Tasks";
+    public static POSTPONE_TASKS = "Postpone Tasks";
 }
 
 export { PlanMenu as PlanMenu }

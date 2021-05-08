@@ -54,6 +54,18 @@ class Task
         );
     }
 
+    public static async postpone_tasks(task_ids: any, new_due_date: Date)
+    {
+        return DBClient.db.collection(Task.COLLECTION_NAME).updateMany(
+            {
+                _id: { $in: task_ids }
+            },
+            {
+                $set: { due_date: new_due_date }
+            }
+        )   
+    }
+
     // CLI Functions
     public static async cli_create_or_select_tasks() {
         const questions = 
@@ -127,14 +139,14 @@ class Task
             },
             {
                 type: 'confirm',
-                name: 'bool_skip_due_date',
-                message: "Skip Due Date?"
+                name: 'bool_due_date',
+                message: "Has Due Date?"
             },
             {
                 type: 'date',
                 name: 'due_date',
                 message: "Due Date",
-                when: (answers: { bool_skip_due_date: any; }) => !answers.bool_skip_due_date
+                when: (answers: { bool_due_date: any; }) => answers.bool_due_date
             },
             {
                 type: 'confirm',
@@ -266,11 +278,27 @@ class Task
         }
     }
 
-    // Delete task functionality
     public static async cli_delete_tasks()
     {
         const task_ids = await Task.cli_select_from_backlog();
         return Task.delete_tasks(task_ids);
+    }
+
+    public static async cli_postpone_tasks()
+    {
+        const task_ids = await Task.cli_select_from_backlog();
+        return inquirer.prompt(
+            [{
+                type: 'date',
+                name: 'new_due_date',
+                message: "New Due Date",
+            }])
+            .then(
+                async (answers: { new_due_date: any; }) =>
+                {
+                    return Task.postpone_tasks(task_ids, answers.new_due_date)
+                }
+            );
     }
 
     // Constants
