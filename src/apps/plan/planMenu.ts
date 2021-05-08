@@ -21,6 +21,7 @@ class PlanMenu
                 new inquirer.Separator(Util.format_separator("Daily Plans")),
                 PlanMenu.VIEW_TODAYS_PLAN,
                 PlanMenu.NEW_DAILY_PLAN,
+                PlanMenu.REVIEW_DAILY_PLAN,
                 new inquirer.Separator(Util.format_separator("Tasks")),
                 PlanMenu.ADD_TASKS_TO_BACKLOG,
                 PlanMenu.VIEW_TASKS_IN_BACKLOG,
@@ -53,6 +54,9 @@ class PlanMenu
                 {
                     Util.print_error("Plan doesn't exist");
                 }
+                break;
+            case PlanMenu.REVIEW_DAILY_PLAN:
+                await DailyPlan.cli_add_review();
                 break;
             case PlanMenu.ADD_TASKS_TO_BACKLOG:
                 await Task.cli_create_new_task();
@@ -92,6 +96,7 @@ class PlanMenu
     public static CREATE_NEW_GOAL = "Create New Goal";
     public static VIEW_GOALS = "View Goals";
     public static DELETE_GOAL = "Delete Goal";
+    public static REVIEW_DAILY_PLAN = "Review Daily Plan"
 }
 
 export { PlanMenu as PlanMenu }

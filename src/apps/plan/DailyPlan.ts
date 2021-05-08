@@ -229,6 +229,7 @@ class DailyPlan
 
     public static async cli_add_review()
     {
+        
         const questions = [
             {
                 type: 'date',
@@ -241,9 +242,10 @@ class DailyPlan
                 message: 'Review:'
             }
         ]
-
+        
         return inquirer.prompt(questions).then(async (answers: { plan_date: Date; review: string; }) =>
             {
+                await DailyPlan.cli_view_daily_plan(answers.plan_date);
                 return DailyPlan.add_review(answers.plan_date, answers.review);
             }
         )
