@@ -2,18 +2,23 @@
 import { Task } from "./task";
 
 // External Modules
+import {v4 as uuid } from 'uuid';
+import { DBClient } from "../../dbClient";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
+
 class DailyPlan
 {
     // Member Variables
-    public date: Date | undefined;
-    public task_ids: Array<string> | undefined;
+    public _id: string;
+    public date: Date;
+    public task_ids: Array<string>;
     public review: string | undefined;
 
     // Constructor
     public constructor(date: Date, task_ids: Array<string>)
     {
+        this._id = uuid();
         this.date = date;
         this.task_ids = task_ids;
     }
@@ -65,16 +70,14 @@ class DailyPlan
         var task_ids = await Task.cli_create_or_select_tasks();
 
         // Create Daily Plan Object with these list of tasks
-        const newPlan = new DailyPlan(plan_date, task_ids);
-
-        // Insert into Database
-
+        await DBClient.db.collection(DailyPlan.COLLECTION_NAME).insertOne(new DailyPlan(plan_date, task_ids));
     }
 
     // Constants
     public static TODAY = "Today";
     public static TOMORROW = "Tomorrow";
     public static OTHER = "Other";
+    public static COLLECTION_NAME = "daily_plan";
 }
 
 export { DailyPlan }

@@ -19,9 +19,9 @@ class Task
     public completed: boolean; 
 
     // Constructor
-    public constructor(_id: string, title: string, description: string, points: number, due_date: Date | undefined)
+    public constructor(title: string, description: string, points: number, due_date: Date | undefined)
     {
-        this._id = _id;
+        this._id = uuid();
         this.title = title;
         this.description = description;
         this.points = points;
@@ -120,7 +120,6 @@ class Task
             {
                 // Create New Task Object
                 var new_task = new Task(
-                    uuid(),
                     answers.title,
                     answers.description,
                     answers.points,
