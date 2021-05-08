@@ -5,24 +5,28 @@ import { EXIT } from "../../constants";
 // External Modules
 const inquirer = require('inquirer');
 import { v4 as uuid } from 'uuid';
+import { DBClient } from "../../dbClient";
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 
 class Task
 {
     // Member Variables
-    public points: number | undefined;
-    public title: string | undefined;
-    public description: string | undefined;
+    public _id: string;
+    public points: number;
+    public title: string;
+    public description: string;
     public due_date: Date | undefined;   
-    public completed: boolean | undefined; 
+    public completed: boolean; 
 
     // Constructor
-    public constructor(title: string, description: string, points: number, due_date: Date | undefined)
+    public constructor(_id: string, title: string, description: string, points: number, due_date: Date | undefined)
     {
+        this._id = _id;
         this.title = title;
         this.description = description;
         this.points = points;
         this.due_date = due_date;
+        this.completed = false;
     }
 
     // CLI Functions
@@ -112,13 +116,11 @@ class Task
         return inquirer
         .prompt(questions)
         .then(
-            (answers: any) =>
+            async (answers: any) =>
             {
-                // Create New Task Id
-                var new_task_id = uuid()
-                
                 // Create New Task Object
                 var new_task = new Task(
+                    uuid(),
                     answers.title,
                     answers.description,
                     answers.points,
@@ -126,13 +128,16 @@ class Task
                 );
 
                 // Save New Task in Database
-                
-                return new_task_id;
+                await DBClient.db.collection(Task.COLLECTION_NAME).insertOne(new_task);
+
+                // Return task id
+                return new_task._id;
             }
         );
     }
 
     // Constants
+    public static COLLECTION_NAME = "task";
     public static CREATE_NEW_TASK = "Create New Task";
     public static ADD_TASK_FROM_BACKLOG = "Add Task From Backlog";
 }

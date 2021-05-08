@@ -24,7 +24,10 @@ console.log(
 // Define main menu
 const main_menu = async () => 
 {
+  // Connect to database
   await DBClient.connect();
+
+  // Get Main Menu 
   await inquirer.prompt(
     [{
       type: 'list',
@@ -45,6 +48,9 @@ const main_menu = async () =>
         console.log(INVALID_OPTION_ERROR)
       }
     })
+
+  // Close DB Connection
+  DBClient.close();
 };
 
 // Create Cli Object

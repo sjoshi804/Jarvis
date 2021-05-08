@@ -1,5 +1,5 @@
 // Internal Modules
-import { Task } from "./Task";
+import { Task } from "./task";
 
 // External Modules
 const inquirer = require('inquirer');
