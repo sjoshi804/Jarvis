@@ -1,3 +1,6 @@
+// External Modules
+const chalk = require('chalk');
+
 class Util 
 {
     public static formatDate(date: Date)
@@ -24,6 +27,11 @@ class Util
         const lower_bound = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
         const upper_bound = new Date(lower_bound.getTime() + 24 * 60 * 60 * 1000);
         return [lower_bound, upper_bound]
+    }
+
+    public static print_error(message: string)
+    {
+        console.log(chalk.red(message));
     }
 }
 

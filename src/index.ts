@@ -8,9 +8,10 @@ const inquirer = require("inquirer");
 const { Command } = require('commander');
 
 // Internal Modules
-import { PlanMenu } from "./apps/plan/planMenu";
-import { INVALID_OPTION_ERROR } from "./constants";
 import { DBClient } from "./dbClient";
+import { INVALID_OPTION_ERROR } from "./constants";
+import { PlanMenu } from "./apps/plan/planMenu";
+import { Util } from "./util";
 
 
 // Splash Screen
@@ -45,7 +46,7 @@ const main_menu = async () =>
       }
       else 
       {
-        console.log(INVALID_OPTION_ERROR)
+        Util.print_error(INVALID_OPTION_ERROR)
       }
     })
 

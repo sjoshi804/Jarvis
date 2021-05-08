@@ -42,7 +42,7 @@ class PlanMenu
                 }
                 else
                 {
-                    console.log("Plan doesn't exist");
+                    Util.print_error("Plan doesn't exist");
                 }
                 break;
             case PlanMenu.ADD_TASKS_TO_BACKLOG:
@@ -52,7 +52,7 @@ class PlanMenu
                 await Task.cli_view_backlog();
                 break;
             default: 
-                console.log(INVALID_OPTION_ERROR)
+                Util.print_error(INVALID_OPTION_ERROR)
         }
     }
 

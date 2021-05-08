@@ -35,14 +35,14 @@ class DailyPlan
                     "$lt": date_bounds[1]
                 }
             })
-        const task_list = await DBClient.db.collection(Task.COLLECTION_NAME).find({"_id" : {"$in" : today_plan.task_ids}}).toArray();
+        const task_list = await DBClient.db.collection(Task.COLLECTION_NAME).find({"_id" : {"$in" : day_plan.task_ids}}).toArray();
         return task_list;
     }
 
     public static async does_plan_exist(date: Date)
     {
         const date_bounds = Util.get_date_bounds(date);
-        const count = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).count(
+        const count = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).countDocuments
             {
                 date: {
                     "$gte": date_bounds[0],
@@ -99,7 +99,7 @@ class DailyPlan
         // Check if plan already exists and if so, print error and break
         if (DailyPlan.does_plan_exist(plan_date))
         {
-            console.log("Plan already exists");
+            Util.print_error("Plan already exists");
             return;
         }
 
