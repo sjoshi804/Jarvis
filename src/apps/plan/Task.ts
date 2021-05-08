@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { exception } from "console";
 import { DBClient } from "../../dbClient";
 import chalk from "chalk";
+import { DailyPlan } from "./DailyPlan";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 const Table = require('cli-table');
@@ -36,6 +37,21 @@ class Task
     public static async get_backlog()
     {
         return await DBClient.db.collection(Task.COLLECTION_NAME).find({completed: false}).toArray();
+    }
+
+    public static async delete_tasks(task_ids: any)
+    {
+        await DBClient.db.collection(DailyPlan.COLLECTION_NAME).updateMany(
+            {},
+            {
+                $pull: { task_ids: { $in: task_ids } } 
+            }
+        )
+        return DBClient.db.collection(Task.COLLECTION_NAME).deleteMany(
+            {
+                _id: { $in: task_ids } 
+            }
+        );
     }
 
     // CLI Functions
@@ -231,19 +247,30 @@ class Task
         console.log(table.toString());
 
         // Completion stats
-        const completed_percentage = points_completed / points_total * 100
-        if (completed_percentage == 100)
+        if (completion_stats)
         {
-            console.log(chalk.green(completed_percentage.toString() + "%"))
+            const completed_percentage = points_completed / points_total * 100
+            if (completed_percentage == 100)
+            {
+                console.log(chalk.green("Completion: " + completed_percentage.toString() + "%"))
+            }
+            else if (completed_percentage > 50)
+            {
+                console.log(chalk.yellow("Completion: " + completed_percentage.toString() + "%"))
+            }
+            else 
+            {
+                console.log(chalk.red("Completion: " + completed_percentage.toString() + "%"))
+            }
+            return completed_percentage;
         }
-        else if (completed_percentage > 50)
-        {
-            console.log(chalk.yellow(completed_percentage.toString() + "%"))
-        }
-        else 
-        {
-            console.log(chalk.red(completed_percentage.toString() + "%"))
-        }
+    }
+
+    // Delete task functionality
+    public static async cli_delete_tasks()
+    {
+        const task_ids = await Task.cli_select_from_backlog();
+        return Task.delete_tasks(task_ids);
     }
 
     // Constants

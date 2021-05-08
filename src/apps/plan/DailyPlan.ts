@@ -192,6 +192,7 @@ class DailyPlan
                     case DailyPlan.MARK_TASKS_COMPLETED:
                         var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
                         await DailyPlan.mark_tasks_completed(chosen_tasks);
+                        await DailyPlan.cli_view_daily_plan(date);
                         break;
                     case DailyPlan.ADD_TASKS_TO_PLAN:
                         var new_task_ids = await Task.cli_create_or_select_tasks();
