@@ -12,6 +12,7 @@ import { DBClient } from "./dbClient";
 import { INVALID_OPTION_ERROR } from "./constants";
 import { PlanMenu } from "./apps/plan/planMenu";
 import { Util } from "./util";
+import { Goal } from "./apps/plan/goal";
 
 
 // Splash Screen
@@ -22,11 +23,16 @@ console.log(
   )
 );
 
+
+
 // Define main menu
 const main_menu = async () => 
 {
   // Connect to database
   await DBClient.connect();
+
+  // Display Goals
+  await Goal.cli_view_goals();
 
   // Get Main Menu 
   await inquirer.prompt(

@@ -8,6 +8,8 @@ import { exception } from "console";
 import { DBClient } from "../../dbClient";
 import chalk from "chalk";
 import { DailyPlan } from "./DailyPlan";
+import { globalAgent } from "http";
+import { Goal } from "./goal";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 const Table = require('cli-table');
@@ -21,9 +23,10 @@ class Task
     public description: string;
     public due_date: Date | undefined;   
     public completed: boolean; 
+    public goal_id: string | undefined;
 
     // Constructor
-    public constructor(title: string, description: string, points: number, due_date: Date | undefined)
+    public constructor(title: string, description: string, points: number, due_date: Date | undefined, goal_id: string | undefined)
     {
         this._id = uuid();
         this.title = title;
@@ -31,6 +34,7 @@ class Task
         this.points = points;
         this.due_date = due_date;
         this.completed = false;
+
     }
 
     // DB Functions
@@ -120,22 +124,38 @@ class Task
     // Create new task using CLI and input into DB
     public static async cli_create_new_task()
     {
+        const goals = await Goal.get_all_goals()
+        var goal_choices = []
+        for (var i = 0; i < goals.length; i++)
+        {   
+            goal_choices.push(
+                {
+                    name: goals[i].title,
+                    value: goals[i]._id
+                }
+            )
+        }
+        goal_choices.push({
+            name: "None",
+            value: null
+        })
+
         const questions = 
         [
             {
                 type: 'input',
                 name: 'title',
-                message: 'Task Title: '
+                message: 'Task Title:'
             },
             {
                 type: 'input',
                 name: 'description',
-                message: 'Description: '
+                message: 'Description:'
             },
             {
                 type: 'number',
                 name: 'points',
-                message: "Points: "
+                message: "Points:"
             },
             {
                 type: 'confirm',
@@ -145,8 +165,14 @@ class Task
             {
                 type: 'date',
                 name: 'due_date',
-                message: "Due Date",
+                message: "Due Date:",
                 when: (answers: { bool_due_date: any; }) => answers.bool_due_date
+            },
+            {
+                type: 'list',
+                name: 'goal_id',
+                message: 'Goal:',
+                choices: goal_choices
             },
             {
                 type: 'confirm',
@@ -169,7 +195,8 @@ class Task
                         answers.title,
                         answers.description,
                         answers.points,
-                        answers.due_date
+                        answers.due_date,
+                        answers.goal_id
                     );
 
                     // Save New Task in Database

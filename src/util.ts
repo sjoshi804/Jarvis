@@ -57,6 +57,11 @@ class Util
             return task_abbrev
         }
     }
+
+    public static text_format_date(date: Date)
+    {
+        return date.toLocaleString('default', { month: 'long' }) + " " + date.getDate() + " " + date.getFullYear()
+    }
 }
 
 export { Util }
