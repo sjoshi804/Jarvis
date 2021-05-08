@@ -88,6 +88,7 @@ class Task
         return task_ids;
     }
 
+    // Create new task using CLI and input into DB
     public static async cli_create_new_task()
     {
         const questions = 
@@ -146,7 +147,12 @@ class Task
     public static async cli_view_backlog()
     {
         var task_list = await Task.get_backlog();
+        Task.print_task_table(task_list);
+    }
 
+    // Misc Functions
+    public static print_task_table(task_list: string | any[])
+    {
         // Instantiate Table
         var table = new Table({
             head: ['Title', 'Points', 'Due Date', 'Description']

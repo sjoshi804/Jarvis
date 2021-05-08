@@ -1,5 +1,6 @@
 // Internal Modules
 import { Task } from "./task";
+import { Util } from "../../util"
 
 // External Modules
 import {v4 as uuid } from 'uuid';
@@ -22,6 +23,22 @@ class DailyPlan
         this.date = date;
         this.task_ids = task_ids;
     }
+
+    // DB Functions
+    public static async get_tasks_for_today()
+    {
+        const today_plan = await DBClient.db.collection(DailyPlan.COLLECTION_NAME).findOne(
+            {
+                date: {
+                    "$gte": Util.getTodayDate(),
+                    "$lt": Util.getTomorrowDate()
+                }
+            })
+        
+        const task_list = await DBClient.db.collection(Task.COLLECTION_NAME).find({"_id" : {"$in" : today_plan.task_ids}}).toArray();
+        return task_list;
+    }
+    
 
     // CLI Functions
     public static async cli_new_daily_plan_prompt()
@@ -55,15 +72,22 @@ class DailyPlan
         var plan_date;
         if (answers.choice == DailyPlan.TODAY)
         {
-            plan_date = new Date()
+            plan_date = Util.getTodayDate()
         }
         else if (answers.choice == DailyPlan.TOMORROW)
         {
-            plan_date = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+            plan_date = Util.getTomorrowDate()
         }
         else 
         {
             plan_date = answers.plan_date
+        }
+        
+        // Check if plan already exists and if so, print error and break
+        if (DailyPlan.does_plan_exist(plan_date))
+        {
+            console.log("Plan already exists");
+            return;
         }
 
         // Get list of tasks for today
