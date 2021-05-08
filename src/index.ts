@@ -10,6 +10,7 @@ const { Command } = require('commander');
 // Internal Modules
 import { PlanMenu } from "./apps/plan/planMenu";
 import { INVALID_OPTION_ERROR } from "./constants";
+import { DBClient } from "./dbClient";
 
 
 // Splash Screen
@@ -23,6 +24,7 @@ console.log(
 // Define main menu
 const main_menu = async () => 
 {
+  await DBClient.connect();
   await inquirer.prompt(
     [{
       type: 'list',
