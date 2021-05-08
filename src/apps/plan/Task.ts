@@ -1,13 +1,14 @@
 // Internal Modules
-import { exception } from "console";
 import { EXIT } from "../../constants";
+import { Util } from "../../util"
 
 // External Modules
-const inquirer = require('inquirer');
-const Table = require('cli-table');
 import { v4 as uuid } from 'uuid';
+import { exception } from "console";
 import { DBClient } from "../../dbClient";
+const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
+const Table = require('cli-table');
 
 class Task
 {
@@ -149,13 +150,13 @@ class Task
         // Instantiate Table
         var table = new Table({
             head: ['Title', 'Points', 'Due Date', 'Description']
-        , colWidths: [25, 10, 25, 50]
+        , colWidths: [25, 10, 15, 50]
         });
 
         // Create table for tasks
         for (var i = 0; i < task_list.length; i++) 
         {
-            const due_date = task_list[i].due_date == undefined ? "N/A" : task_list[i].due_date;
+            const due_date = task_list[i].due_date == undefined ? "N/A" : Util.formatDate(task_list[i].due_date);
             var task_row = [task_list[i].title, task_list[i].points, due_date, task_list[i].description];
             table.push(task_row);
         }
