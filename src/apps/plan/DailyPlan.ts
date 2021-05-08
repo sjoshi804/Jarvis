@@ -230,25 +230,34 @@ class DailyPlan
     public static async cli_add_review()
     {
         
-        const questions = [
+        const date_question = [
             {
                 type: 'date',
                 name: 'plan_date',
                 message: 'Enter Date:'
-            },
+            }
+        ]
+        
+        var plan_date: Date;
+        await inquirer.prompt(date_question).then(async (answers: { plan_date: Date}) =>
+            {
+                plan_date = answers.plan_date;
+                return DailyPlan.cli_view_daily_plan(answers.plan_date);
+            }
+        )
+
+        const review_question = [
             {
                 type: 'input',
                 name: 'review',
                 message: 'Review:'
             }
         ]
-        
-        return inquirer.prompt(questions).then(async (answers: { plan_date: Date; review: string; }) =>
-            {
-                await DailyPlan.cli_view_daily_plan(answers.plan_date);
-                return DailyPlan.add_review(answers.plan_date, answers.review);
-            }
-        )
+
+        return inquirer.prompt(review_question).then(async (answers: { review: string; }) =>
+        {
+            return DailyPlan.add_review(plan_date, answers.review)
+        })
     }
 
     // Constants
