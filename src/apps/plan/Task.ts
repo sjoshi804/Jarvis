@@ -67,7 +67,7 @@ class Task
                             new_task_ids = await Task.cli_create_new_task();
                             return;
                         case Task.ADD_TASK_FROM_BACKLOG:
-                            new_task_ids = undefined;
+                            new_task_ids = await Task.cli_select_from_backlog();
                             return;
                         case EXIT:
                             return;
@@ -156,6 +156,35 @@ class Task
         }
 
         return new_task_ids;
+    }
+    
+    public static async cli_select_from_backlog()
+    {
+        return this.cli_choose_tasks_from_list(await Task.get_backlog());
+    }
+
+    public static async cli_choose_tasks_from_list(task_list: any[])
+    {
+        var task_choices = [];
+        for (var i = 0; i < task_list.length; i++)
+        {
+            task_choices.push(
+                {
+                    name: Util.short_display_task(task_list[i]),
+                    value: task_list[i]._id
+                }
+            )
+        }
+
+        return inquirer.prompt(
+            [{
+                type: 'checkbox',
+                message: 'Choose Tasks',
+                name: 'selected_tasks',
+                choices: task_choices,
+            
+            }])
+            .then((answers: { selected_tasks: any; }) => answers.selected_tasks)
     }
 
     public static async cli_view_backlog()

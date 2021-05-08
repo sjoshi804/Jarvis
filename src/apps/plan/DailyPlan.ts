@@ -97,7 +97,7 @@ class DailyPlan
         }
         
         // Check if plan already exists and if so, print error and break
-        if (DailyPlan.does_plan_exist(plan_date))
+        if (await DailyPlan.does_plan_exist(plan_date))
         {
             Util.print_error("Plan already exists");
             return;

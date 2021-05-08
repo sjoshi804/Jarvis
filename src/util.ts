@@ -3,8 +3,14 @@ const chalk = require('chalk');
 
 class Util 
 {
-    public static formatDate(date: Date)
+    public static formatDate(date: Date | null)
     {
+        // Null check
+        if (date == null)
+        {
+            return "";
+        }
+
         const month = date.toLocaleString('default', { month: 'short' })
         const day = date.getDate();
         var formatted_date = month + " " + day
@@ -37,6 +43,11 @@ class Util
     public static format_separator(heading: string): string
     {
         return "==== " + heading + " ===="
+    }
+
+    public static short_display_task(task: { title: string; due_date: Date | null; })
+    {
+        return chalk.red(task.title + " " + Util.formatDate(task.due_date))
     }
 }
 
