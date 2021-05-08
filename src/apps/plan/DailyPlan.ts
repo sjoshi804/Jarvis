@@ -1,4 +1,5 @@
-import { exception } from "console";
+// Internal Modules
+import { Task } from "./Task";
 
 // External Modules
 const inquirer = require('inquirer');
@@ -11,7 +12,7 @@ class DailyPlan
     public review: string | undefined;
 
     // Constructor
-    public DailyPlan(date: Date, task_ids: Array<string>)
+    public constructor(date: Date, task_ids: Array<string>)
     {
         this.date = date;
         this.task_ids = task_ids;
@@ -59,7 +60,15 @@ class DailyPlan
         {
             plan_date = answers.plan_date
         }
-        console.log("Plan Date", plan_date)
+
+        // Get list of tasks for today
+        var task_ids = Task.cli_create_or_select_tasks();
+
+        // Create Daily Plan Object with these list of tasks
+        const newPlan = new DailyPlan(plan_date, task_ids);
+
+        // Insert into Database
+
     }
 
     // Constants
