@@ -19,7 +19,7 @@ class DailyPlan
     }
 
     // CLI Functions
-    public static cli_new_daily_plan_prompt()
+    public static async cli_new_daily_plan_prompt()
     {
         const questions = 
         [
@@ -45,7 +45,7 @@ class DailyPlan
             .then(DailyPlan.cli_new_daily_plan_response)
     }
 
-    public static cli_new_daily_plan_response(answers: any)
+    public static async cli_new_daily_plan_response(answers: any)
     {
         var plan_date;
         if (answers.choice == DailyPlan.TODAY)
@@ -62,7 +62,7 @@ class DailyPlan
         }
 
         // Get list of tasks for today
-        var task_ids = Task.cli_create_or_select_tasks();
+        var task_ids = await Task.cli_create_or_select_tasks();
 
         // Create Daily Plan Object with these list of tasks
         const newPlan = new DailyPlan(plan_date, task_ids);

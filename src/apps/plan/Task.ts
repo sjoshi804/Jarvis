@@ -26,7 +26,7 @@ class Task
     }
 
     // CLI Functions
-    public static cli_create_or_select_tasks(): Array<string> {
+    public static async cli_create_or_select_tasks() {
         const questions = 
         [
             {
@@ -41,41 +41,42 @@ class Task
             }
         ]
 
+        var task_ids = new Array<string>();
         var new_task_id;
-        inquirer.prompt(questions).then(
-            (answers: { choice: any; }) =>
-            {
-                switch (answers.choice)
+        do
+        {
+            new_task_id = undefined;
+            await inquirer.prompt(questions).then(
+                async (answers: { choice: any; }) =>
                 {
-                    case Task.CREATE_NEW_TASK:
-                        new_task_id = Task.cli_create_new_task();
-                        break;
-                    case Task.ADD_TASK_FROM_BACKLOG:
-                        new_task_id = undefined;
-                        break; 
-                    case EXIT:
-                        break;
-                    default:
-                        throw exception("Invalid choice.")
+                    switch (answers.choice)
+                    {
+                        case Task.CREATE_NEW_TASK:
+                            new_task_id = await Task.cli_create_new_task();
+                            return;
+                        case Task.ADD_TASK_FROM_BACKLOG:
+                            new_task_id = undefined;
+                            return;
+                        case EXIT:
+                            return;
+                        default:
+                            throw exception("Invalid choice.")
+                    }
                 }
+            )
+            
+            // Add new task to list of tasks
+            if (new_task_id != undefined)
+            {
+                task_ids.push(new_task_id) 
             }
-        )
+        }
+        while (new_task_id != undefined)
         
-        // Add new task to list of tasks and recurse
-        var taskIdList = new Array<string>();
-        if (new_task_id != undefined)
-        {
-            taskIdList.push(new_task_id)
-            return taskIdList.concat(Task.cli_create_or_select_tasks())
-        }
-        // Base case - no more tasks 
-        else 
-        {
-            return taskIdList;
-        }
+        return task_ids;
     }
 
-    public static cli_create_new_task(): string
+    public static async cli_create_new_task()
     {
         const questions = 
         [
@@ -107,14 +108,14 @@ class Task
             }
         ]
 
-        var new_task_id = "";
-        inquirer
+        
+        return inquirer
         .prompt(questions)
         .then(
             (answers: any) =>
             {
                 // Create New Task Id
-                new_task_id = uuid()
+                var new_task_id = uuid()
                 
                 // Create New Task Object
                 var new_task = new Task(
@@ -123,15 +124,12 @@ class Task
                     answers.points,
                     answers.due_date
                 );
-                console.log(new_task_id, answers);
 
                 // Save New Task in Database
                 
-
+                return new_task_id;
             }
         );
-        
-        return new_task_id;
     }
 
     // Constants

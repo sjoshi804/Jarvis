@@ -21,9 +21,9 @@ console.log(
 );
 
 // Define main menu
-const main_menu = () => 
+const main_menu = async () => 
 {
-  inquirer.prompt(
+  await inquirer.prompt(
     [{
       type: 'list',
       name: 'choice',
@@ -32,11 +32,11 @@ const main_menu = () =>
         PlanMenu.MODULE_NAME,
         'Idea'
       ],
-    }]).then((answers: any) =>
+    }]).then(async (answers: any) =>
     {
       if (answers.choice == PlanMenu.MODULE_NAME)
       {
-        PlanMenu.prompt()
+        await PlanMenu.prompt()
       }
       else 
       {

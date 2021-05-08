@@ -7,7 +7,7 @@ const inquirer = require("inquirer");
 
 class PlanMenu
 {
-    public static prompt()
+    public static async prompt()
     {
         const questions = 
         {
@@ -26,12 +26,12 @@ class PlanMenu
             .then(PlanMenu.response)
     }
 
-    public static response(answers: any)
+    public static async response(answers: any)
     {
         switch(answers.choice)
         {
             case PlanMenu.NEW_DAILY_PLAN:
-                DailyPlan.cli_new_daily_plan_prompt();
+                await DailyPlan.cli_new_daily_plan_prompt();
                 break;
             case PlanMenu.VIEW_TODAYS_PLAN:
                 //DailyPlan.cli_view_todays_plan();
