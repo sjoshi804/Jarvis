@@ -5,7 +5,6 @@ import { Util } from "../../util";
 
 // External Modules
 const chalk = require('chalk');
-const Table = require('cli-table');
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 import { v4 as uuid } from 'uuid';

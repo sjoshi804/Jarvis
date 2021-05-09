@@ -9,9 +9,10 @@ import { DBClient } from "../../dbClient";
 import chalk from "chalk";
 import { DailyPlan } from "./DailyPlan";
 import { Goal } from "./goal";
+import { table } from 'table';
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
-const Table = require('cli-table');
+
 
 class Task
 {
@@ -252,15 +253,27 @@ class Task
     // Misc Functions
     public static cli_print_task_table(task_list: string | any[], completion_stats = false)
     {
-        // Instantiate Table
-        var table = new Table({
-            head: ['Title', 'Points', 'Due Date', 'Description']
-        , colWidths: [25, 10, 15, 50]
-        });
-
+        var data = []
         var points_total = 0;
         var points_completed = 0;
+
+
         // Create table for tasks
+        // Headings
+        var column_headings = 
+        [
+            "Title",
+            "Points",
+            "Due Date",
+            "Description"
+        ];
+        for (var j = 0; j < column_headings.length; j++)
+        {
+            column_headings[j] = chalk.bold(chalk.inverse(column_headings[j]));
+        }
+        data.push(column_headings);
+
+        // Main Table
         for (var i = 0; i < task_list.length; i++) 
         {
             const due_date = task_list[i].due_date == undefined ? "N/A" : Util.formatDate(task_list[i].due_date);
@@ -269,20 +282,40 @@ class Task
             // Status based color formatting
             if (task_list[i].due_date != null && task_list[i].due_date < (new Date()))
             {
-                task_row.forEach(elem => chalk.red(elem))
+                for (var j = 0; j < task_row.length; j++)
+                {
+                    task_row[i] = chalk.red(task_row[i]);
+                }
             }
-            else if (task_list[i].completed == true)
+            else (task_list[i].completed == true)
             {
-                task_row.forEach(elem => chalk.green(elem))
+                for (var j = 0; j < task_row.length; j++)
+                {
+                    task_row[j] = chalk.green(task_row[j]);
+                }
                 points_completed += task_list[i].points;
             }
 
             points_total = task_list[i].points;
-            table.push(task_row);
+            data.push(task_row);
         }
-
+    
         // Print Table
-        console.log(table.toString());
+        console.log(
+            table(data, {
+                columns: {
+                  0: {
+                    width: 40,
+                    wrapWord: true
+                  },
+                  3: {
+                    alignment: 'justify',
+                    width: 40,
+                    wrapWord: true,
+                  },
+                }
+              })
+          );
 
         // Completion stats
         if (completion_stats)
@@ -290,15 +323,15 @@ class Task
             const completed_percentage = points_completed / points_total * 100
             if (completed_percentage == 100)
             {
-                console.log(chalk.green("Completion: " + completed_percentage.toString() + "%"))
+                console.log(chalk.green("Completion: " + completed_percentage.toString() + "%\n"))
             }
             else if (completed_percentage > 50)
             {
-                console.log(chalk.yellow("Completion: " + completed_percentage.toString() + "%"))
+                console.log(chalk.yellow("Completion: " + completed_percentage.toString() + "%\n"))
             }
             else 
             {
-                console.log(chalk.red("Completion: " + completed_percentage.toString() + "%"))
+                console.log(chalk.red("Completion: " + completed_percentage.toString() + "%\n"))
             }
             return completed_percentage;
         }
