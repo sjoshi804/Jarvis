@@ -168,6 +168,8 @@ class DailyPlan
 
         // Create Daily Plan Object with these list of tasks
         await DBClient.db.collection(DailyPlan.COLLECTION_NAME).insertOne(new DailyPlan(plan_date, task_ids));
+
+        return DailyPlan.cli_view_daily_plan(plan_date);
     }
 
     public static async cli_view_daily_plan(date: Date)
