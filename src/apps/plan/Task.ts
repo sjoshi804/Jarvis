@@ -334,17 +334,11 @@ class Task
             // Status based color formatting
             if (task_list[i].due_date != null && task_list[i].due_date < (new Date()))
             {
-                for (var j = 0; j < task_row.length; j++)
-                {
-                    task_row[i] = chalk.red(task_row[i]);
-                }
+                task_row[0] = chalk.red(task_row[0])
             }
             else if (task_list[i].completed != null)
             {
-                for (var j = 0; j < task_row.length; j++)
-                {
-                    task_row[j] = chalk.green(task_row[j]);
-                }
+                task_row[0] = chalk.green(task_row[0])
                 points_completed += task_list[i].points;
             }
 
