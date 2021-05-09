@@ -16,7 +16,7 @@ class Goal
     public title: string;
     public description: string;
     public achieve_by_date: Date;
-    public completed: boolean;
+    public completed: Date | undefined;
 
     // Constructor
     public constructor(title: string, description: string, achieve_by_date: Date)
@@ -25,7 +25,6 @@ class Goal
         this.title = title;
         this.description = description;
         this.achieve_by_date = achieve_by_date;
-        this.completed = false;
     }
 
     // DB Functions
@@ -56,12 +55,13 @@ class Goal
 
     public static async mark_goal_completed(goal_id: string)
     {
+        const now = new Date()
         return DBClient.db.collection(Goal.COLLECTION_NAME).updateOne(
             {
                 _id: goal_id
             },
             {
-                $set: {completed: true}
+                $set: {completed: now}
             }
         )
     }

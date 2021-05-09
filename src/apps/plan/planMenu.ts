@@ -18,6 +18,8 @@ class PlanMenu
             name: 'choice',
             message: 'What do you want to do?',
             choices: [
+                new inquirer.Separator(Util.format_separator("Week Ahead")),
+                PlanMenu.VIEW_WEEK_AHEAD,
                 new inquirer.Separator(Util.format_separator("Daily Plans")),
                 PlanMenu.VIEW_TODAYS_PLAN,
                 PlanMenu.NEW_DAILY_PLAN,
@@ -42,6 +44,9 @@ class PlanMenu
     {
         switch(answers.choice)
         {
+            case PlanMenu.VIEW_WEEK_AHEAD:
+                await Task.cli_view_week_ahead();
+                break;
             case PlanMenu.NEW_DAILY_PLAN:
                 await DailyPlan.cli_new_daily_plan_prompt();
                 break;
@@ -97,6 +102,7 @@ class PlanMenu
     public static VIEW_GOALS = "View Goals";
     public static DELETE_GOAL = "Delete Goal";
     public static REVIEW_DAILY_PLAN = "Review Daily Plan"
+    public static VIEW_WEEK_AHEAD = "View Week Ahead"
 }
 
 export { PlanMenu as PlanMenu }

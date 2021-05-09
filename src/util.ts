@@ -62,6 +62,14 @@ class Util
     {
         return date.toLocaleString('default', { month: 'long' }) + " " + date.getDate() + " " + date.getFullYear()
     }
+
+    public static setToMonday( date: Date) 
+    {
+        var day = date.getDay() || 7;  
+        if( day !== 1 ) 
+            date.setHours(-24 * (day - 1)); 
+        return date;
+    }
 }
 
 export { Util }

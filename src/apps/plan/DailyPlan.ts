@@ -68,18 +68,6 @@ class DailyPlan
             });
         return count > 0;
     }
-
-    public static async mark_tasks_completed(task_id_list: any)
-    {
-        return DBClient.db.collection(Task.COLLECTION_NAME).updateMany(
-            {
-                _id: { $in : task_id_list }
-            },
-            {
-                $set: { completed: true }
-            }
-        )
-    }
     
     public static async remove_tasks_from_plan(plan_date: Date, task_id_list: any)
     {
@@ -209,7 +197,7 @@ class DailyPlan
                 {
                     case DailyPlan.MARK_TASKS_COMPLETED:
                         var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
-                        await DailyPlan.mark_tasks_completed(chosen_tasks);
+                        await Task.mark_tasks_completed(chosen_tasks);
                         await DailyPlan.cli_view_daily_plan(date);
                         break;
                     case DailyPlan.ADD_TASKS_TO_PLAN:

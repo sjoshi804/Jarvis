@@ -1,15 +1,15 @@
 // Internal Modules
+import { DBClient } from "../../dbClient";
+import { DailyPlan } from "./DailyPlan";
 import { EXIT } from "../../constants";
+import { Goal } from "./goal";
 import { Util } from "../../util"
 
 // External Modules
-import { v4 as uuid } from 'uuid';
-import { exception } from "console";
-import { DBClient } from "../../dbClient";
 import chalk from "chalk";
-import { DailyPlan } from "./DailyPlan";
-import { Goal } from "./goal";
+import { exception } from "console";
 import { table } from 'table';
+import { v4 as uuid } from 'uuid';
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 
@@ -22,7 +22,7 @@ class Task
     public title: string;
     public description: string;
     public due_date: Date | undefined;   
-    public completed: boolean; 
+    public completed: Date | undefined; 
     public goal_id: string | undefined;
 
     // Constructor
@@ -33,14 +33,67 @@ class Task
         this.description = description;
         this.points = points;
         this.due_date = due_date;
-        this.completed = false;
-
     }
 
     // DB Functions
     public static async get_backlog()
     {
-        return await DBClient.db.collection(Task.COLLECTION_NAME).find({completed: false}).toArray();
+        const backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find({completed: null}).toArray();
+        return backlog.sort((a,b) => a.due_date - b.due_date)
+    }
+
+    public static async get_current_week_backlog()
+    {
+        const this_monday_date = Util.setToMonday(Util.get_today_date())
+        const next_monday_date = Util.setToMonday(Util.get_today_date())
+        next_monday_date.setHours(24 * 7)
+        const week_backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find(
+            {
+                $or:
+                [ 
+                {
+                    completed: null,
+                    due_date: 
+                    {
+                        $lt: this_monday_date
+                    }
+                },
+                {
+                    completed: 
+                    {
+                        $gte: this_monday_date
+                    },
+                    due_date: 
+                    {
+                        $lt: this_monday_date
+                    }
+                },
+                {   
+                    due_date: 
+                    {
+                        $lte: next_monday_date
+                    }
+                }
+                ]
+            }
+        ).toArray();
+        return week_backlog.sort((a,b) => a.due_date - b.due_date)
+    }
+
+    public static async mark_tasks_completed(task_id_list: any)
+    {
+        const now = new Date()
+        return DBClient.db.collection(Task.COLLECTION_NAME).updateMany(
+            {
+                _id: { $in : task_id_list }
+            },
+            {
+                $set: 
+                { 
+                    completed: now
+                }
+            }
+        )
     }
 
     public static async delete_tasks(task_ids: any)
@@ -250,7 +303,6 @@ class Task
         Task.cli_print_task_table(task_list);
     }
 
-    // Misc Functions
     public static cli_print_task_table(task_list: string | any[], completion_stats = false)
     {
         var data = []
@@ -287,7 +339,7 @@ class Task
                     task_row[i] = chalk.red(task_row[i]);
                 }
             }
-            else if (task_list[i].completed)
+            else if (task_list[i].completed != null)
             {
                 for (var j = 0; j < task_row.length; j++)
                 {
@@ -358,6 +410,12 @@ class Task
                     return Task.postpone_tasks(task_ids, answers.new_due_date)
                 }
             );
+    }
+
+    public static async cli_view_week_ahead()
+    {
+        const task_list = await Task.get_current_week_backlog();
+        Task.cli_print_task_table(task_list, true);
     }
 
     // Constants
