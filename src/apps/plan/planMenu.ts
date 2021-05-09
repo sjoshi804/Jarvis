@@ -75,7 +75,7 @@ class PlanMenu
                 await Goal.cli_view_goals();
                 break;
             case PlanMenu.VIEW_GOALS:
-                await Goal.cli_view_goals();
+                await Goal.cli_view_goals(true);
                 break;
             case PlanMenu.DELETE_GOAL:
                 await Goal.cli_delete_goal();

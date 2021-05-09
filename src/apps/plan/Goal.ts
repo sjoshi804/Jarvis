@@ -125,7 +125,7 @@ class Goal
         )
     }
 
-    public static async cli_view_goals()
+    public static async cli_view_goals(full=false)
     {
         const goal_list = await Goal.get_all_goals();
 
@@ -137,7 +137,10 @@ class Goal
         {
             console.log(chalk.bold(goal_list[i].title));
             console.log(chalk.bold(Util.text_format_date(goal_list[i].achieve_by_date)));
-            console.log(goal_list[i].description);
+            if (full)
+            {
+                console.log(goal_list[i].description);
+            }
             console.log("\n");
         }
     }
