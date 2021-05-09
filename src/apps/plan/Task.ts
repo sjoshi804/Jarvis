@@ -278,7 +278,7 @@ class Task
         {
             const due_date = task_list[i].due_date == undefined ? "N/A" : Util.formatDate(task_list[i].due_date);
             var task_row = [task_list[i].title, task_list[i].points, due_date, task_list[i].description];
-            
+
             // Status based color formatting
             if (task_list[i].due_date != null && task_list[i].due_date < (new Date()))
             {
@@ -287,7 +287,7 @@ class Task
                     task_row[i] = chalk.red(task_row[i]);
                 }
             }
-            else (task_list[i].completed == true)
+            else if (task_list[i].completed)
             {
                 for (var j = 0; j < task_row.length; j++)
                 {
