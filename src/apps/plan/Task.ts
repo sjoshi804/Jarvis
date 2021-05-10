@@ -325,7 +325,9 @@ class Task
         var points_total = 0;
         var points_completed = 0;
 
-
+        // Space before
+        console.log("\n");
+        
         // Create table for tasks
         // Headings
         var column_headings = 

@@ -140,7 +140,10 @@ class Goal
             {
                 console.log(goal_list[i].description);
             }
-            console.log("\n");
+            if (i < goal_list.length - 1)
+            {
+                console.log("\n");
+            }
         }
     }
 
