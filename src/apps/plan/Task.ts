@@ -385,17 +385,18 @@ class Task
         if (completion_stats)
         {
             const completed_percentage = points_completed / points_total * 100
+            const stats = "Completion: " + completed_percentage.toString() + "% " + "(" + points_completed.toString() + "/" + points_total.toString() +  ")\n"
             if (completed_percentage == 100)
             {
-                console.log(chalk.greenBright("Completion: " + completed_percentage.toString() + "%\n"))
+                console.log(chalk.greenBright(stats))
             }
             else if (completed_percentage > 50)
             {
-                console.log(chalk.yellowBright("Completion: " + completed_percentage.toString() + "%\n"))
+                console.log(chalk.yellowBright(stats))
             }
             else 
             {
-                console.log(chalk.redBright("Completion: " + completed_percentage.toString() + "%\n"))
+                console.log(chalk.redBright(stats))
             }
             return completed_percentage;
         }
