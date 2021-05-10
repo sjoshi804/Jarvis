@@ -20,6 +20,7 @@ class PlanMenu
             choices: [
                 new inquirer.Separator(Util.format_separator("Week Ahead")),
                 PlanMenu.VIEW_WEEK_AHEAD,
+                PlanMenu.VIEW_NEXT_WEEK_TASKS,
                 new inquirer.Separator(Util.format_separator("Daily Plans")),
                 PlanMenu.VIEW_TODAYS_PLAN,
                 PlanMenu.NEW_DAILY_PLAN,
