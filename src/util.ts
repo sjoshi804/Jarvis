@@ -96,20 +96,17 @@ class Util
 
     public static is_date_in_current_week(date: Date)
     {
-        const todayObj = new Date();
-        const todayDate = todayObj.getDate();
-        const todayDay = todayObj.getDay();
+        const today = Util.get_today_date();
       
         // get first date of week
-        const firstDayOfWeek = new Date(todayObj.setDate(todayDate - todayDay));
+        const firstDayOfWeek = Util.set_to_monday(today)
       
         // get last date of week
-        const lastDayOfWeek = new Date(firstDayOfWeek);
-        lastDayOfWeek.setDate(lastDayOfWeek.getDate() + 6);
+        const firstDayOfNextWeek = Util.set_to_next_week(firstDayOfWeek)
       
         // if date is equal or within the first and last dates of the week
         // if date is equal or within the first and last dates of the week
-        return date >= firstDayOfWeek && date <= lastDayOfWeek;
+        return date >= firstDayOfWeek && date < firstDayOfNextWeek;
     }
 }
 
