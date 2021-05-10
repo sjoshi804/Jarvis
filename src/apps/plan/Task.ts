@@ -10,6 +10,7 @@ import chalk from "chalk";
 import { exception } from "console";
 import { table } from 'table';
 import { v4 as uuid } from 'uuid';
+import { start } from "repl";
 const inquirer = require('inquirer');
 inquirer.registerPrompt("date", require("inquirer-date-prompt"));
 
@@ -235,6 +236,7 @@ class Task
                 type: 'date',
                 name: 'due_date',
                 message: "Due Date:",
+                default: new Date (Util.set_to_next_week(Util.set_to_monday(Util.get_today_date())).getTime() - 1),
                 when: (answers: { bool_due_date: any; }) => answers.bool_due_date
             },
             {
@@ -344,15 +346,27 @@ class Task
         data.push(column_headings);
 
         // Main Table
+        var start_of_day = new Date()
+        start_of_day.setHours(0, 0, 0, 0);
+        var end_of_day = new Date();
+        end_of_day.setHours(11, 59, 59, 999);
         for (var i = 0; i < task_list.length; i++) 
         {
             const due_date = task_list[i].due_date == undefined ? "N/A" : Util.formatDate(task_list[i].due_date);
             var task_row = [task_list[i].title, task_list[i].points, due_date, task_list[i].description];
 
             // Status based color formatting
-            if (task_list[i].due_date != null && task_list[i].due_date < (new Date()) && task_list[i].completed == null)
+            if (task_list[i].due_date != null && task_list[i].completed == null)
             {
-                task_row[0] = chalk.red(task_row[0])
+                if (task_list[i].due_date < start_of_day)
+                {
+                    task_row[0] = chalk.red(task_row[0])
+                }
+                else if (task_list[i].due_date <= end_of_day)
+                {
+                    task_row[0] = chalk.yellow(task_row[0]);
+                }
+                
             }
             else if (task_list[i].completed != null)
             {
@@ -385,7 +399,7 @@ class Task
         if (completion_stats)
         {
             const completed_percentage = points_completed / points_total * 100
-            const stats = "Completion: " + completed_percentage.toString() + "% " + "(" + points_completed.toString() + "/" + points_total.toString() +  ")\n"
+            const stats = "Completion: " + Math.round(completed_percentage).toString() + "% " + "(" + points_completed.toString() + "/" + points_total.toString() +  ")\n"
             if (completed_percentage == 100)
             {
                 console.log(chalk.greenBright(stats))
