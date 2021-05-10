@@ -47,8 +47,10 @@ class Util
 
     public static short_display_task(task: { title: string; due_date: Date | null; points: number})
     {
+        var start_of_day = new Date()
+        start_of_day.setHours(0, 0, 0, 0);
         const task_abbrev = task.title + " (" + task.points + ") - " + Util.formatDate(task.due_date)
-        if (task.due_date != null && task.due_date < (new Date()))
+        if (task.due_date != null && task.due_date < start_of_day)
         {
             return chalk.red(task_abbrev)
         }
