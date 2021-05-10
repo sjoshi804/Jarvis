@@ -380,22 +380,22 @@ class Task
                 }
               })
           );
-        console.log(points_completed, points_total)
+        
         // Completion stats
         if (completion_stats)
         {
             const completed_percentage = points_completed / points_total * 100
             if (completed_percentage == 100)
             {
-                console.log(chalk.green("Completion: " + completed_percentage.toString() + "%\n"))
+                console.log(chalk.greenBright("Completion: " + completed_percentage.toString() + "%\n"))
             }
             else if (completed_percentage > 50)
             {
-                console.log(chalk.yellow("Completion: " + completed_percentage.toString() + "%\n"))
+                console.log(chalk.yellowBright("Completion: " + completed_percentage.toString() + "%\n"))
             }
             else 
             {
-                console.log(chalk.red("Completion: " + completed_percentage.toString() + "%\n"))
+                console.log(chalk.redBright("Completion: " + completed_percentage.toString() + "%\n"))
             }
             return completed_percentage;
         }

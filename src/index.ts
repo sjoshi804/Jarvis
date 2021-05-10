@@ -63,7 +63,7 @@ const main_menu = async () =>
 // Create Cli Object
 const cli = new Command();
 cli
-  .version('1.0')
+  .version('1.0.0')
   .description("CLI Interface for Virtual Assistant Jarvis")
   .action(main_menu)
 
