@@ -79,9 +79,20 @@ class Util
         return date
     }
 
-    public static compare_due_date(a: any, b: any)
+    public static compare_tasks(a: any, b: any)
     {
-        return Util.get_valid_due_date(a.due_date) - Util.get_valid_due_date(b.due_date)
+        if (a.completed == b.completed)
+        {
+            return Util.get_valid_due_date(a.due_date) - Util.get_valid_due_date(b.due_date)
+        }
+        else if (a.completed == null)
+        {
+            return -1;
+        }
+        else
+        {
+            return 1;
+        }
     }
 
     public static get_valid_due_date(due_date: any)

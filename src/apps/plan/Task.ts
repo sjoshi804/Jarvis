@@ -346,7 +346,7 @@ class Task
         data.push(column_headings);
 
         // Sort task list
-        task_list = task_list.sort(Util.compare_due_date)
+        task_list = task_list.sort(Util.compare_tasks)
 
         // Main Table
         var start_of_day = new Date()
