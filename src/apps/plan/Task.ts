@@ -40,7 +40,7 @@ class Task
     public static async get_backlog()
     {
         const backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find({completed: null}).toArray();
-        return backlog.sort(Util.compare_due_date)
+        return backlog
     }
 
     public static async get_week_backlog(date: Date)
@@ -95,7 +95,7 @@ class Task
                 }
             ).toArray();
         }
-        return week_backlog.sort(Util.compare_due_date)
+        return week_backlog
     }
 
     public static async mark_tasks_completed(task_id_list: any)
@@ -321,7 +321,7 @@ class Task
         Task.cli_print_task_table(task_list);
     }
 
-    public static cli_print_task_table(task_list: string | any[], completion_stats = false)
+    public static cli_print_task_table(task_list: any[], completion_stats = false)
     {
         var data = []
         var points_total = 0;
@@ -344,6 +344,9 @@ class Task
             column_headings[j] = chalk.bold(chalk.inverse(column_headings[j]));
         }
         data.push(column_headings);
+
+        // Sort task list
+        task_list = task_list.sort(Util.compare_due_date)
 
         // Main Table
         var start_of_day = new Date()
