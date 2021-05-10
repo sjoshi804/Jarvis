@@ -350,7 +350,7 @@ class Task
             var task_row = [task_list[i].title, task_list[i].points, due_date, task_list[i].description];
 
             // Status based color formatting
-            if (task_list[i].due_date != null && task_list[i].due_date < (new Date()))
+            if (task_list[i].due_date != null && task_list[i].due_date < (new Date()) && task_list[i].completed == null)
             {
                 task_row[0] = chalk.red(task_row[0])
             }
