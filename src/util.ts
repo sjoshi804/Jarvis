@@ -63,12 +63,35 @@ class Util
         return date.toLocaleString('default', { month: 'long' }) + " " + date.getDate() + " " + date.getFullYear()
     }
 
-    public static setToMonday( date: Date) 
+    public static set_to_monday(date: Date) 
     {
         var day = date.getDay() || 7;  
         if( day !== 1 ) 
             date.setHours(-24 * (day - 1)); 
         return date;
+    }
+
+    public static set_to_next_week(date: Date)
+    {
+        date.setHours(24 * 7);
+        return date
+    }
+
+    public static compare_due_date(a: any, b: any)
+    {
+        return Util.get_valid_due_date(a.due_date) - Util.get_valid_due_date(b.due_date)
+    }
+
+    public static get_valid_due_date(due_date: any)
+    {
+        if (due_date == null)
+        {
+            return new Date(8640000000000000)
+        }
+        else 
+        {
+            return due_date
+        }
     }
 }
 

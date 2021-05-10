@@ -39,14 +39,13 @@ class Task
     public static async get_backlog()
     {
         const backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find({completed: null}).toArray();
-        return backlog.sort((a,b) => a.due_date - b.due_date)
+        return backlog.sort(Util.compare_due_date)
     }
 
-    public static async get_current_week_backlog()
+    public static async get_week_backlog(date: Date)
     {
-        const this_monday_date = Util.setToMonday(Util.get_today_date())
-        const next_monday_date = Util.setToMonday(Util.get_today_date())
-        next_monday_date.setHours(24 * 7)
+        const this_monday_date = Util.set_to_monday(date);
+        const next_monday_date = Util.set_to_next_week(new Date(this_monday_date));
         const week_backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find(
             {
                 $or:
@@ -77,7 +76,7 @@ class Task
                 ]
             }
         ).toArray();
-        return week_backlog.sort((a,b) => a.due_date - b.due_date)
+        return week_backlog.sort(Util.compare_due_date)
     }
 
     public static async mark_tasks_completed(task_id_list: any)
