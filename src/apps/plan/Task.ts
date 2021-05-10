@@ -46,36 +46,54 @@ class Task
     {
         const this_monday_date = Util.set_to_monday(date);
         const next_monday_date = Util.set_to_next_week(new Date(this_monday_date));
-        const week_backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find(
-            {
-                $or:
-                [ 
+
+        var week_backlog;
+        if (Util.is_date_in_current_week(date))
+        {
+            week_backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find(
                 {
-                    completed: null,
-                    due_date: 
+                    $or:
+                    [ 
                     {
-                        $lt: this_monday_date
-                    }
-                },
-                {
-                    completed: 
-                    {
-                        $gte: this_monday_date
+                        completed: null,
+                        due_date: 
+                        {
+                            $lt: this_monday_date
+                        }
                     },
-                    due_date: 
                     {
-                        $lt: this_monday_date
+                        completed: 
+                        {
+                            $gte: this_monday_date
+                        },
+                        due_date: 
+                        {
+                            $lt: this_monday_date
+                        }
+                    },
+                    {   
+                        due_date: 
+                        {
+                            $gte: this_monday_date,
+                            $lte: next_monday_date
+                        }
                     }
-                },
-                {   
+                    ]
+                }
+            ).toArray();
+        }
+        else
+        {
+            week_backlog = await DBClient.db.collection(Task.COLLECTION_NAME).find(
+                {
                     due_date: 
                     {
-                        $lte: next_monday_date
+                        $gte: this_monday_date,
+                        $lt: next_monday_date
                     }
                 }
-                ]
-            }
-        ).toArray();
+            ).toArray();
+        }
         return week_backlog.sort(Util.compare_due_date)
     }
 
@@ -157,7 +175,6 @@ class Task
                     }
                 }
             )
-            
             
             // Add new task to list of tasks
             if (new_task_ids != undefined)
