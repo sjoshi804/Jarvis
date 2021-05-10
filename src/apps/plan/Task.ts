@@ -327,7 +327,7 @@ class Task
 
         // Space before
         console.log("\n");
-        
+
         // Create table for tasks
         // Headings
         var column_headings = 
@@ -360,7 +360,7 @@ class Task
                 points_completed += task_list[i].points;
             }
 
-            points_total = task_list[i].points;
+            points_total += task_list[i].points;
             data.push(task_row);
         }
     
@@ -380,7 +380,7 @@ class Task
                 }
               })
           );
-
+        console.log(points_completed, points_total)
         // Completion stats
         if (completion_stats)
         {
