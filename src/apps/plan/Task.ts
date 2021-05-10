@@ -405,9 +405,9 @@ class Task
             );
     }
 
-    public static async cli_view_week_ahead()
+    public static async cli_view_week_tasks(date: Date)
     {
-        const task_list = await Task.get_current_week_backlog();
+        const task_list = await Task.get_week_backlog(date);
         Task.cli_print_task_table(task_list, true);
     }
 

@@ -45,7 +45,10 @@ class PlanMenu
         switch(answers.choice)
         {
             case PlanMenu.VIEW_WEEK_AHEAD:
-                await Task.cli_view_week_ahead();
+                await Task.cli_view_week_tasks(Util.get_today_date());
+                break;
+            case PlanMenu.VIEW_NEXT_WEEK_TASKS:
+                await Task.cli_view_week_tasks(Util.set_to_next_week(Util.get_today_date()));
                 break;
             case PlanMenu.NEW_DAILY_PLAN:
                 await DailyPlan.cli_new_daily_plan_prompt();
@@ -103,6 +106,7 @@ class PlanMenu
     public static DELETE_GOAL = "Delete Goal";
     public static REVIEW_DAILY_PLAN = "Review Daily Plan"
     public static VIEW_WEEK_AHEAD = "View Week Ahead"
+    public static VIEW_NEXT_WEEK_TASKS = "View Next Week\'s Tasks"
 }
 
 export { PlanMenu as PlanMenu }
