@@ -108,6 +108,19 @@ class Util
         // if date is equal or within the first and last dates of the week
         return date >= firstDayOfWeek && date < firstDayOfNextWeek;
     }
+
+    public static filter_complete_tasks(task_list: any[])
+    {
+        var filtered_task_list = [];
+        for (var i = 0; i < task_list.length; i++)
+        {
+            if (task_list[i].completed == null)
+            {
+                filtered_task_list.push(task_list[i])
+            }
+        }
+        return filtered_task_list;
+    }
 }
 
 export { Util }

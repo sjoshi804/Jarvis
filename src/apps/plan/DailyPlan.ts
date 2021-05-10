@@ -172,6 +172,7 @@ class DailyPlan
     {
         // View daily plan
         const task_list = await DailyPlan.cli_view_daily_plan(date);
+        const incomplete_task_list = Util.filter_complete_tasks(task_list);
 
         // Check if user wants to mark tasks completed / add more tasks to plan / remove tasks from plan
         const questions = 
@@ -196,7 +197,7 @@ class DailyPlan
                 switch (answers.choice)
                 {
                     case DailyPlan.MARK_TASKS_COMPLETED:
-                        var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
+                        var chosen_tasks = await Task.cli_choose_tasks_from_list(incomplete_task_list);
                         await Task.mark_tasks_completed(chosen_tasks);
                         await DailyPlan.cli_view_daily_plan(date);
                         break;
@@ -206,7 +207,7 @@ class DailyPlan
                         await DailyPlan.cli_view_daily_plan(date);
                         break;
                     case DailyPlan.REMOVE_TASKS_FROM_PLAN:
-                        var chosen_tasks = await Task.cli_choose_tasks_from_list(task_list);
+                        var chosen_tasks = await Task.cli_choose_tasks_from_list(incomplete_task_list);
                         await DailyPlan.remove_tasks_from_plan(date, chosen_tasks);
                         await DailyPlan.cli_view_daily_plan(date);
                         break;
