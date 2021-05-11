@@ -1,5 +1,5 @@
 // Internal Modules
-import { DailyPlan } from "./DailyPlan";
+import { DailyPlan } from "./dailyPlan";
 import { INVALID_OPTION_ERROR } from "../../constants";
 import { Task } from "./task";
 import { Util } from "../../util";

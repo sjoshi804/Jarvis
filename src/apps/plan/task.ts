@@ -1,6 +1,6 @@
 // Internal Modules
 import { DBClient } from "../../dbClient";
-import { DailyPlan } from "./DailyPlan";
+import { DailyPlan } from "./dailyPlan";
 import { EXIT } from "../../constants";
 import { Goal } from "./goal";
 import { Util } from "../../util"
