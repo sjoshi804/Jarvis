@@ -55,28 +55,19 @@ class Task
                 {
                     $or:
                     [ 
+                    // Captures all incomplete tasks whether originally in current sprint or not
                     {
                         completed: null,
                         due_date: 
                         {
-                            $lt: this_monday_date
+                            $lt: next_monday_date
                         }
                     },
+                    // Captures all tasks completed this week
                     {
                         completed: 
                         {
                             $gte: this_monday_date
-                        },
-                        due_date: 
-                        {
-                            $lt: this_monday_date
-                        }
-                    },
-                    {   
-                        due_date: 
-                        {
-                            $gte: this_monday_date,
-                            $lte: next_monday_date
                         }
                     }
                     ]

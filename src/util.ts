@@ -110,13 +110,13 @@ class Util
     public static is_date_in_current_week(date: Date)
     {
         const today = Util.get_today_date();
-      
+        
         // get first date of week
         const firstDayOfWeek = Util.set_to_monday(today)
       
         // get last date of week
-        const firstDayOfNextWeek = Util.set_to_next_week(firstDayOfWeek)
-      
+        const firstDayOfNextWeek = Util.set_to_next_week(new Date(firstDayOfWeek))
+        
         // if date is equal or within the first and last dates of the week
         // if date is equal or within the first and last dates of the week
         return date >= firstDayOfWeek && date < firstDayOfNextWeek;
