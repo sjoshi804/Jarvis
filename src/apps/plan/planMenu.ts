@@ -18,12 +18,14 @@ class PlanMenu
             name: 'choice',
             message: 'What do you want to do?',
             choices: [
-                new inquirer.Separator(Util.format_separator("Daily Plans")),
+                new inquirer.Separator(Util.format_separator("Quick Access")),
                 PlanMenu.VIEW_TODAYS_PLAN,
+                PlanMenu.VIEW_WEEK_TASKS,
+                new inquirer.Separator(Util.format_separator("Daily Plans")),
+                PlanMenu.VIEW_OTHER_DAILY_PLAN,
                 PlanMenu.NEW_DAILY_PLAN,
                 PlanMenu.REVIEW_DAILY_PLAN,
                 new inquirer.Separator(Util.format_separator("Week Ahead")),
-                PlanMenu.VIEW_WEEK_TASKS,
                 PlanMenu.VIEW_NEXT_WEEK_TASKS,
                 new inquirer.Separator(Util.format_separator("Tasks")),
                 PlanMenu.ADD_TASKS_TO_BACKLOG,
@@ -89,6 +91,9 @@ class PlanMenu
             case PlanMenu.DELETE_GOAL:
                 await Goal.cli_delete_goal();
                 break;
+            case PlanMenu.VIEW_OTHER_DAILY_PLAN:
+                await DailyPlan.cli_view_other_daily_plan();
+                break;
             default: 
                 Util.print_error(INVALID_OPTION_ERROR)
         }
@@ -108,6 +113,7 @@ class PlanMenu
     public static REVIEW_DAILY_PLAN = "Review Daily Plan"
     public static VIEW_WEEK_TASKS = "View Week\'s Tasks"
     public static VIEW_NEXT_WEEK_TASKS = "View Next Week\'s Tasks"
+    public static VIEW_OTHER_DAILY_PLAN = "View Other Daily Plan";
 }
 
 export { PlanMenu as PlanMenu }

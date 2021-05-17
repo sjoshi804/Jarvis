@@ -163,9 +163,17 @@ class DailyPlan
     public static async cli_view_daily_plan(date: Date)
     {
         // Get task list for day and display
-        var task_list = await DailyPlan.get_tasks_for_day(date);
-        Task.cli_print_task_table(task_list, true)
-        return task_list
+        if (await DailyPlan.does_plan_exist(date))
+        {
+            var task_list = await DailyPlan.get_tasks_for_day(date);
+            Task.cli_print_task_table(task_list, true)
+            return task_list
+        }
+        else
+        {
+            Util.print_error("Plan does not exist");
+            return []
+        }
     }
 
     public static async cli_view_and_edit_daily_plan(date: Date)
@@ -221,16 +229,8 @@ class DailyPlan
     public static async cli_add_review()
     {
         
-        const date_question = [
-            {
-                type: 'date',
-                name: 'plan_date',
-                message: 'Enter Date:'
-            }
-        ]
-        
         var plan_date: Date;
-        await inquirer.prompt(date_question).then(async (answers: { plan_date: Date}) =>
+        await inquirer.prompt(DailyPlan.DATE_QUESTION).then(async (answers: { plan_date: Date}) =>
             {
                 plan_date = answers.plan_date;
                 return DailyPlan.cli_view_daily_plan(answers.plan_date);
@@ -251,6 +251,17 @@ class DailyPlan
         })
     }
 
+    public static async cli_view_other_daily_plan()
+    {
+        var plan_date: Date;
+        return inquirer.prompt(DailyPlan.DATE_QUESTION).then(async (answers: { plan_date: Date}) =>
+            {
+                plan_date = answers.plan_date;
+                return DailyPlan.cli_view_daily_plan(answers.plan_date);
+            }
+        )
+    }
+
     // Constants
     public static TODAY = "Today";
     public static TOMORROW = "Tomorrow";
@@ -259,6 +270,14 @@ class DailyPlan
     public static MARK_TASKS_COMPLETED = "Mark Tasks Completed";
     public static ADD_TASKS_TO_PLAN = "Add Tasks to Plan"
     public static REMOVE_TASKS_FROM_PLAN = "Remove Tasks from Plan"
+
+    public static DATE_QUESTION = [
+        {
+            type: 'date',
+            name: 'plan_date',
+            message: 'Enter Date:'
+        }
+    ]
 }
 
 export { DailyPlan }
