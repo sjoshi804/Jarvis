@@ -1,19 +1,35 @@
-// frontend/src/components/Schedule/ScheduleDisplay.tsx
+// src/components/Schedule/ScheduleDisplay.tsx
 
 import React from 'react';
 import { Schedule } from '../../types/types';
 import { Typography, Box, Paper, List, ListItem, ListItemText } from '@mui/material';
 
 interface ScheduleDisplayProps {
-  schedule: Schedule;
+  schedule: Schedule | null; // Allow schedule to be null
 }
 
 const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ schedule }) => {
-  console.log('Schedule in ScheduleDisplay:', schedule); // Debugging line
+  if (!schedule) {
+    return (
+      <Typography variant="body1">No schedule available. Generate one to get started.</Typography>
+    );
+  }
+
   const { dailyPlans } = schedule;
 
+  // Check if dailyPlans is defined and is an object
+  if (!dailyPlans || typeof dailyPlans !== 'object') {
+    return (
+      <Typography variant="body1" color="error">
+        Invalid schedule data.
+      </Typography>
+    );
+  }
+
   // Convert dailyPlans map to an array of [date, tasks]
-  const scheduleEntries = Object.entries(dailyPlans).sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
+  const scheduleEntries = Object.entries(dailyPlans).sort(
+    (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()
+  );
 
   return (
     <Box>

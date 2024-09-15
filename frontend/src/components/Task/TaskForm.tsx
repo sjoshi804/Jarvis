@@ -8,12 +8,12 @@ import {
   MenuItem,
   Typography,
   Box,
+  Snackbar,
+  Alert,
 } from '@mui/material';
-import { DatePicker } from '@mui/lab'; // Ensure you're using @mui/lab or @mui/x-date-pickers
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { Project } from '../../types/types';
-import { TextFieldProps } from '@mui/material/TextField'; // Import TextFieldProps for typing
 
 interface TaskFormProps {
   project: Project;
@@ -26,10 +26,26 @@ const TaskForm: React.FC<TaskFormProps> = ({ project, onTaskAdded }) => {
   const [estimatedTime, setEstimatedTime] = useState<number>(1);
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !dueDate) return;
+    if (!title.trim() || !dueDate) {
+      setSnackbar({
+        open: true,
+        message: 'Please provide all required fields.',
+        severity: 'error',
+      });
+      return;
+    }
 
     try {
       await createTask({
@@ -46,9 +62,23 @@ const TaskForm: React.FC<TaskFormProps> = ({ project, onTaskAdded }) => {
       setPriority('medium');
       setDueDate(null);
       onTaskAdded();
+      setSnackbar({
+        open: true,
+        message: 'Task added successfully!',
+        severity: 'success',
+      });
     } catch (error) {
       console.error('Error creating task:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to add task. Please try again later.',
+        severity: 'error',
+      });
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -77,7 +107,12 @@ const TaskForm: React.FC<TaskFormProps> = ({ project, onTaskAdded }) => {
         label="Estimated Time (hours)"
         type="number"
         value={estimatedTime}
-        onChange={(e) => setEstimatedTime(parseInt(e.target.value, 10))}
+        onChange={(e) => {
+          const value = parseInt(e.target.value, 10);
+          if (!isNaN(value)) {
+            setEstimatedTime(value);
+          }
+        }}
         required
         fullWidth
         margin="normal"
@@ -100,15 +135,25 @@ const TaskForm: React.FC<TaskFormProps> = ({ project, onTaskAdded }) => {
         <DatePicker
           label="Due Date"
           value={dueDate}
-          onChange={(newValue: Date | null) => setDueDate(newValue)} // Added type annotation
-          renderInput={(params: TextFieldProps) => ( // Added type annotation
-            <TextField {...params} required fullWidth margin="normal" />
-          )}
+          onChange={(newValue: Date | null) => setDueDate(newValue)}
+          // The renderInput prop has been removed
         />
       </LocalizationProvider>
       <Button type="submit" variant="contained" color="primary">
         Add Task
       </Button>
+
+      {/* Snackbar for User Feedback */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

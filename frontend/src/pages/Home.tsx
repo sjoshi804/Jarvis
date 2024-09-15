@@ -1,5 +1,3 @@
-// frontend/src/pages/Home.tsx
-
 import React, { useState, useEffect } from 'react';
 import ScheduleDisplay from '../components/Schedule/ScheduleDisplay';
 import { Typography, Box, Button, TextField, CircularProgress, Snackbar, Alert } from '@mui/material';
@@ -21,12 +19,10 @@ const Home: React.FC = () => {
     severity: 'success',
   });
 
-// After generating the schedule
   const handleGenerateSchedule = async () => {
     setLoading(true);
     try {
       const generatedSchedule = await generateSchedule(availableHours);
-      console.log('Generated Schedule:', generatedSchedule); // Debugging line
       setSchedule(generatedSchedule);
       setSnackbar({
         open: true,
@@ -44,13 +40,11 @@ const Home: React.FC = () => {
     }
     setLoading(false);
   };
-  
-  // After fetching the current schedule
+
   const fetchCurrentSchedule = async () => {
     setLoading(true);
     try {
       const currentSchedule = await getCurrentSchedule();
-      console.log('Current Schedule:', currentSchedule); // Debugging line
       setSchedule(currentSchedule);
     } catch (err) {
       console.error('Error fetching schedule:', err);
@@ -58,7 +52,7 @@ const Home: React.FC = () => {
     }
     setLoading(false);
   };
-  
+
   useEffect(() => {
     // Fetch the current schedule on component mount
     fetchCurrentSchedule();
@@ -87,10 +81,10 @@ const Home: React.FC = () => {
           {loading ? <CircularProgress size={24} /> : 'Generate Schedule'}
         </Button>
       </Box>
-      {schedule ? (
-        <ScheduleDisplay schedule={schedule} />
+      {loading ? (
+        <CircularProgress />
       ) : (
-        <Typography variant="body1">No schedule available. Generate one to get started.</Typography>
+        <ScheduleDisplay schedule={schedule} />
       )}
       <Snackbar
         open={snackbar.open}
